@@ -43,12 +43,12 @@ class CheeseLocalDataSource {
 
     boolean isCheeseStale() {
         LocalDateTime cacheExpiration = LocalDateTime.now().minus(CACHE_VALID_AMOUNT, CACHE_VALID_UNIT);
-        return cheeseManager.findOldestCacheDate().isAfter(cacheExpiration);
+        return cheeseManager.findOldestCacheDate().isBefore(cacheExpiration);
     }
 
     boolean isCheeseStale(long cheeseId) {
         LocalDateTime cacheExpiration = LocalDateTime.now().minus(CACHE_VALID_AMOUNT, CACHE_VALID_UNIT);
-        return cheeseManager.findCacheDate(cheeseId).isAfter(cacheExpiration);
+        return cheeseManager.findCacheDate(cheeseId).isBefore(cacheExpiration);
     }
 
     List<Cheese> saveCheeses(@NonNull List<CheeseDto> cheeseDtos) {

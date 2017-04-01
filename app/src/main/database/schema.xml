@@ -4,11 +4,14 @@
           xsi:schemaLocation='https://github.com/jeffdcamp/dbtools-gen dbschema.xsd'>
     <database name="main" fieldsDefaultNotNull="true"> <!-- recommended: use fieldsDefaultNotNull="true" to make all table fields default notNull -->
         <table name="cheese">
-            <field name="id" jdbcDataType="BIGINT" primaryKey="true" increment="false"/> <!-- This id comes from the server no auto increment -->
+            <field name="id" jdbcDataType="BIGINT"/> <!-- This id comes from the server no auto increment -->
             <field name="name" jdbcDataType="VARCHAR"/>
             <field name="description" jdbcDataType="VARCHAR"/>
             <field name="image_url" jdbcDataType="VARCHAR"/>
             <field name="cached" jdbcDataType="DATETIME"/>
+            <unique sqliteOnConflict="REPLACE">
+                <uniqueField name="id"/>
+            </unique>
         </table>
         <table name="comment">
             <field name="id" jdbcDataType="BIGINT" primaryKey="true" increment="true"/>

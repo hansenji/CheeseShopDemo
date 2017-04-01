@@ -21,7 +21,6 @@ class CheeseListPresenter {
     @Nullable
     private Disposable cheeseDisposable = null;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
-    private long modelTs = 0;
 
     @Inject
     CheeseListPresenter(CheeseListContract.View view,
@@ -33,24 +32,20 @@ class CheeseListPresenter {
     }
 
     void start() {
-        Disposable disposable = cheeseRepository.dataChanges()
-                .observeOn(schedulerProvider.ui())
-                .subscribe(change -> loadCheeses());
-        compositeDisposable.add(disposable);
+        loadCheeses(false);
     }
 
     void stop() {
         compositeDisposable.clear();
     }
 
-    void loadCheeses() {
+    void loadCheeses(boolean forceRefresh) {
         view.showLoading(true);
         if (cheeseDisposable != null) {
             cheeseDisposable.dispose();
             compositeDisposable.remove(cheeseDisposable);
         }
-        modelTs = cheeseRepository.modelTs();
-        cheeseDisposable = cheeseRepository.getCheeses()
+        cheeseDisposable = cheeseRepository.getCheeses(forceRefresh)
                 .subscribeOn(schedulerProvider.computation())
                 .observeOn(schedulerProvider.ui())
                 .subscribe(cheeses -> {
@@ -62,11 +57,5 @@ class CheeseListPresenter {
                             view.showError();
                             view.showLoading(false);
                         });
-    }
-
-    void reloadCheeses() {
-        if (cheeseRepository.isUpdatedSince(modelTs)) {
-            loadCheeses();
-        }
     }
 }

@@ -10,10 +10,11 @@
 
 package com.vikingsen.cheesedemo.model.database.cheese;
 
-import org.dbtools.android.domain.AndroidBaseRecord;
-import org.dbtools.android.domain.database.statement.StatementWrapper;
-import org.dbtools.android.domain.database.contentvalues.DBToolsContentValues;
 import android.database.Cursor;
+
+import org.dbtools.android.domain.AndroidBaseRecord;
+import org.dbtools.android.domain.database.contentvalues.DBToolsContentValues;
+import org.dbtools.android.domain.database.statement.StatementWrapper;
 
 
 @SuppressWarnings("all")
@@ -26,21 +27,6 @@ public abstract class CheeseBaseRecord extends AndroidBaseRecord {
     private org.threeten.bp.LocalDateTime cached = org.threeten.bp.LocalDateTime.now();
 
     public CheeseBaseRecord() {
-    }
-
-    @Override
-    public String getIdColumnName() {
-        return CheeseConst.C_ID;
-    }
-
-    @Override
-    public long getPrimaryKeyId() {
-        return id;
-    }
-
-    @Override
-    public void setPrimaryKeyId(long id) {
-        this.id = id;
     }
 
     @Override
@@ -99,7 +85,6 @@ public abstract class CheeseBaseRecord extends AndroidBaseRecord {
         statement.bindString(3, description);
         statement.bindString(4, imageUrl);
         statement.bindString(5, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateTimeToDBString(cached));
-        statement.bindLong(6, id);
     }
 
     public void setContent(DBToolsContentValues values) {
@@ -121,6 +106,21 @@ public abstract class CheeseBaseRecord extends AndroidBaseRecord {
 
     public boolean isNewRecord() {
         return getPrimaryKeyId() <= 0;
+    }
+
+    @Override
+    public String getIdColumnName() {
+        return "NO_PRIMARY_KEY";
+    }
+
+    @Override
+    public long getPrimaryKeyId() {
+        return 0;
+    }
+
+    @Override
+    public void setPrimaryKeyId(long id) {
+        // NO_PRIMARY_KEY
     }
 
     public long getId() {

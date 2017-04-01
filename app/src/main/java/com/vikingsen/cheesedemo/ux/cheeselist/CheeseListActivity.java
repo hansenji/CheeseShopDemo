@@ -58,15 +58,12 @@ public class CheeseListActivity extends AppCompatActivity implements CheeseListC
 
         setupRecyclerView();
         setupSwipeRefresh();
-
-        presenter.loadCheeses();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         presenter.start();
-        presenter.reloadCheeses();
     }
 
     @Override
@@ -92,7 +89,7 @@ public class CheeseListActivity extends AppCompatActivity implements CheeseListC
     @Override
     public void showError() {
         Snackbar.make(clCoordinatorLayout, R.string.failed_to_refresh_cheeses, Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.retry, v -> presenter.loadCheeses())
+                .setAction(R.string.retry, v -> presenter.loadCheeses(true))
                 .show();
     }
 
@@ -113,6 +110,6 @@ public class CheeseListActivity extends AppCompatActivity implements CheeseListC
 
     private void setupSwipeRefresh() {
         clSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorAccent, R.color.colorPrimaryDark);
-        clSwipeRefreshLayout.setOnRefreshListener(() -> presenter.loadCheeses());
+        clSwipeRefreshLayout.setOnRefreshListener(() -> presenter.loadCheeses(true));
     }
 }

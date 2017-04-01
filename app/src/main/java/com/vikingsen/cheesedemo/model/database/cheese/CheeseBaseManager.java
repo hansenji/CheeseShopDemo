@@ -43,7 +43,7 @@ public abstract class CheeseBaseManager extends RxAndroidBaseManagerWritable<Che
 
     @javax.annotation.Nonnull
     public String getPrimaryKey() {
-        return CheeseConst.PRIMARY_KEY_COLUMN;
+        return "NO_PRIMARY_KEY";
     }
 
     @javax.annotation.Nonnull

@@ -19,7 +19,6 @@ public class CheeseConst {
     public static final String DATABASE = "main";
     public static final String TABLE = "cheese";
     public static final String FULL_TABLE = "main.cheese";
-    public static final String PRIMARY_KEY_COLUMN = "id";
     public static final String C_ID = "id";
     public static final String FULL_C_ID = "cheese.id";
     public static final String C_NAME = "name";
@@ -31,17 +30,18 @@ public class CheeseConst {
     public static final String C_CACHED = "cached";
     public static final String FULL_C_CACHED = "cheese.cached";
     public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS cheese (" + 
-        "id INTEGER NOT NULL PRIMARY KEY," + 
+        "id INTEGER NOT NULL," + 
         "name TEXT NOT NULL," + 
         "description TEXT NOT NULL," + 
         "image_url TEXT NOT NULL," + 
-        "cached TEXT NOT NULL" + 
+        "cached TEXT NOT NULL," + 
+        "UNIQUE(id) ON CONFLICT REPLACE" + 
         ");" + 
         "" + 
         "";
     public static final String DROP_TABLE = "DROP TABLE IF EXISTS cheese;";
     public static final String INSERT_STATEMENT = "INSERT INTO cheese (id,name,description,image_url,cached) VALUES (?,?,?,?,?)";
-    public static final String UPDATE_STATEMENT = "UPDATE cheese SET id=?, name=?, description=?, image_url=?, cached=? WHERE id = ?";
+    public static final String UPDATE_STATEMENT = "UPDATE cheese SET id=?, name=?, description=?, image_url=?, cached=? WHERE  = ?";
     public static final String[] ALL_COLUMNS = new String[] {
         C_ID,
         C_NAME,

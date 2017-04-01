@@ -14,6 +14,8 @@ import javax.inject.Singleton;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import kotlin.Pair;
+import timber.log.Timber;
 
 @Singleton
 public class CheeseRepository {
@@ -27,27 +29,33 @@ public class CheeseRepository {
         this.localDataSource = localDataSource;
     }
 
-    public Single<List<Cheese>> getCheeses() {
-        return Single.fromCallable(() -> localDataSource.isCheeseStale())
-                .flatMap(stale -> {
+    public Single<List<Cheese>> getCheeses(boolean forceRefresh) {
+        return Single.just(forceRefresh)
+                .flatMap(force -> {
                     Single<List<Cheese>> remoteCheese = getAndSaveRemoteCheeses();
                     Single<List<Cheese>> localCheese = localDataSource.getCheeses();
-                    if (stale) {
+                    if (force || localDataSource.isCheeseStale()) {
+                        Timber.d("CHEESE IS STALE");
                         return concatSources(remoteCheese, localCheese);
                     } else {
+                        Timber.d("CHEESE IS FRESH");
                         return concatSources(localCheese, remoteCheese);
                     }
                 });
     }
 
-    public Maybe<Cheese> getCheese(long cheeseId) {
-        return Maybe.just(cheeseId)
-                .flatMap(id -> {
+    public Maybe<Cheese> getCheese(long cheeseId, boolean forceRefresh) {
+        return Maybe.just(new Pair<>(cheeseId, forceRefresh))
+                .flatMap(pair -> {
+                    long id = pair.getFirst();
+                    boolean force = pair.getSecond();
                     Maybe<Cheese> remoteCheese = getAndSaveRemoteCheese(id);
                     Maybe<Cheese> localCheese = localDataSource.getCheese(id);
-                            if (localDataSource.isCheeseStale(id)) {
+                            if (force || localDataSource.isCheeseStale(id)) {
+                                Timber.d("CHEESE IS STALE");
                                 return concatSources(remoteCheese, localCheese);
                             } else {
+                                Timber.d("CHEESE IS FRESH");
                                 return concatSources(localCheese, remoteCheese);
                             }
                         }
