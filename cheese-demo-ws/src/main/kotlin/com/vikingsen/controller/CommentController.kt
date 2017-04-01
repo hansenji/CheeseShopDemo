@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
 
 @RestController
-@RequestMapping("/comment")
+@RequestMapping("/api/v1/comment")
 class CommentController(val commentRepository: CommentRepository,
                         val cheeseRepository: CheeseRepository) {
 

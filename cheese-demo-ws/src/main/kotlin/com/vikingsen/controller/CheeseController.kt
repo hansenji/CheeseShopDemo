@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 import javax.servlet.http.HttpServletRequest
 
 @RestController
-@RequestMapping("/cheese")
+@RequestMapping("/api/v1/cheese")
 class CheeseController(val cheeseRepository: CheeseRepository) {
     @GetMapping()
     fun findAll(): Iterable<Cheese>? {

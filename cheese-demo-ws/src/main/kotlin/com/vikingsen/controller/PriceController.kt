@@ -16,7 +16,7 @@ import java.util.Random
 import javax.servlet.http.HttpServletRequest
 
 @RestController
-@RequestMapping("/price")
+@RequestMapping("/api/v1/price")
 class PriceController(val priceRepository: PriceRepository) {
 
     private val random = Random(42)
