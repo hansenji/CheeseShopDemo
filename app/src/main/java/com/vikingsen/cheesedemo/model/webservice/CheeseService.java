@@ -20,6 +20,9 @@ public interface CheeseService {
     @GET("api/v1/cheese")
     Call<List<CheeseDto>> getCheeses();
 
+    @GET("api/v1/cheese/{cheeseId}")
+    Call<CheeseDto> getCheese(@Path("cheeseId") long cheeseId);
+
     @GET("api/v1/price/{cheeseId}")
     Call<PriceDto> getPrice(@Path("cheeseId") long cheeseId);
 

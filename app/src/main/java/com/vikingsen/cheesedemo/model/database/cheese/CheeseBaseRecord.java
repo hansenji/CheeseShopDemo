@@ -10,11 +10,10 @@
 
 package com.vikingsen.cheesedemo.model.database.cheese;
 
-import android.database.Cursor;
-
 import org.dbtools.android.domain.AndroidBaseRecord;
-import org.dbtools.android.domain.database.contentvalues.DBToolsContentValues;
 import org.dbtools.android.domain.database.statement.StatementWrapper;
+import org.dbtools.android.domain.database.contentvalues.DBToolsContentValues;
+import android.database.Cursor;
 
 
 @SuppressWarnings("all")
@@ -24,7 +23,7 @@ public abstract class CheeseBaseRecord extends AndroidBaseRecord {
     private String name = "";
     private String description = "";
     private String imageUrl = "";
-    private org.threeten.bp.LocalDateTime cacheTime = org.threeten.bp.LocalDateTime.now();
+    private org.threeten.bp.LocalDateTime cached = org.threeten.bp.LocalDateTime.now();
 
     public CheeseBaseRecord() {
     }
@@ -59,7 +58,7 @@ public abstract class CheeseBaseRecord extends AndroidBaseRecord {
         values.put(CheeseConst.C_NAME, name);
         values.put(CheeseConst.C_DESCRIPTION, description);
         values.put(CheeseConst.C_IMAGE_URL, imageUrl);
-        values.put(CheeseConst.C_CACHE_TIME, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateTimeToDBString(cacheTime));
+        values.put(CheeseConst.C_CACHED, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateTimeToDBString(cached));
     }
 
     @Override
@@ -69,7 +68,7 @@ public abstract class CheeseBaseRecord extends AndroidBaseRecord {
             name,
             description,
             imageUrl,
-            org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateTimeToDBString(cacheTime),
+            org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateTimeToDBString(cached),
         };
         return values;
     }
@@ -80,7 +79,7 @@ public abstract class CheeseBaseRecord extends AndroidBaseRecord {
         copy.setName(name);
         copy.setDescription(description);
         copy.setImageUrl(imageUrl);
-        copy.setCacheTime(cacheTime);
+        copy.setCached(cached);
         return copy;
     }
 
@@ -90,7 +89,7 @@ public abstract class CheeseBaseRecord extends AndroidBaseRecord {
         statement.bindString(2, name);
         statement.bindString(3, description);
         statement.bindString(4, imageUrl);
-        statement.bindString(5, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateTimeToDBString(cacheTime));
+        statement.bindString(5, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateTimeToDBString(cached));
     }
 
     @Override
@@ -99,7 +98,7 @@ public abstract class CheeseBaseRecord extends AndroidBaseRecord {
         statement.bindString(2, name);
         statement.bindString(3, description);
         statement.bindString(4, imageUrl);
-        statement.bindString(5, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateTimeToDBString(cacheTime));
+        statement.bindString(5, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateTimeToDBString(cached));
         statement.bindLong(6, id);
     }
 
@@ -108,7 +107,7 @@ public abstract class CheeseBaseRecord extends AndroidBaseRecord {
         name = values.getAsString(CheeseConst.C_NAME);
         description = values.getAsString(CheeseConst.C_DESCRIPTION);
         imageUrl = values.getAsString(CheeseConst.C_IMAGE_URL);
-        cacheTime = org.dbtools.android.domain.date.DBToolsThreeTenFormatter.dbStringToLocalDateTime(values.getAsString(CheeseConst.C_CACHE_TIME));
+        cached = org.dbtools.android.domain.date.DBToolsThreeTenFormatter.dbStringToLocalDateTime(values.getAsString(CheeseConst.C_CACHED));
     }
 
     @Override
@@ -117,7 +116,7 @@ public abstract class CheeseBaseRecord extends AndroidBaseRecord {
         name = cursor.getString(cursor.getColumnIndexOrThrow(CheeseConst.C_NAME));
         description = cursor.getString(cursor.getColumnIndexOrThrow(CheeseConst.C_DESCRIPTION));
         imageUrl = cursor.getString(cursor.getColumnIndexOrThrow(CheeseConst.C_IMAGE_URL));
-        cacheTime = org.dbtools.android.domain.date.DBToolsThreeTenFormatter.dbStringToLocalDateTime(cursor.getString(cursor.getColumnIndexOrThrow(CheeseConst.C_CACHE_TIME)));
+        cached = org.dbtools.android.domain.date.DBToolsThreeTenFormatter.dbStringToLocalDateTime(cursor.getString(cursor.getColumnIndexOrThrow(CheeseConst.C_CACHED)));
     }
 
     public boolean isNewRecord() {
@@ -160,12 +159,12 @@ public abstract class CheeseBaseRecord extends AndroidBaseRecord {
     }
 
     @javax.annotation.Nonnull
-    public org.threeten.bp.LocalDateTime getCacheTime() {
-        return cacheTime;
+    public org.threeten.bp.LocalDateTime getCached() {
+        return cached;
     }
 
-    public void setCacheTime(@javax.annotation.Nonnull org.threeten.bp.LocalDateTime cacheTime) {
-        this.cacheTime = cacheTime;
+    public void setCached(@javax.annotation.Nonnull org.threeten.bp.LocalDateTime cached) {
+        this.cached = cached;
     }
 
 
