@@ -1,5 +1,40 @@
+import java.text.SimpleDateFormat
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://code.lds.org/nexus/content/groups/mobile/' }
+        maven { url 'https://maven.fabric.io/public' }
+        jcenter()
+        mavenLocal()
+    }
+
+    dependencies {
+        classpath 'me.tatarka:gradle-retrolambda:3.6.0'
+        classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2' // work-around for retrolambda and lint issues (remove when retrolambda is
+    }
+    // Exclude the version that the android plugin depends on.
+    configurations.classpath.exclude group: 'com.android.tools.external.lombok'
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'dbtools'
+apply plugin: 'me.tatarka.retrolambda'
+
+def artOnly = false; // enable a fast build supported ONLY by Android 5.0+
+def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
+
+def dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
+dateFormatter.setTimeZone(TimeZone.getTimeZone("UTC"))
+def buildTime = dateFormatter.format(new Date())
+
+// Manifest version information
+def versionMajor = 1
+def versionMinor = 0
+def versionPatch = 0
+def versionBuild = 1
+def versionMajorMinorPatchBuild = "${versionMajor}.${versionMinor}.${versionPatch}.${versionBuild}"
+
 
 android {
     compileSdkVersion 25
@@ -8,12 +43,55 @@ android {
         applicationId "com.vikingsen.cheesedemo"
         minSdkVersion 19
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    }
-    buildTypes {
 
+        if (artOnly) {
+            minSdkVersion 21 // temp enable to perform faster builds
+        }
+
+        versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
+        versionName versionMajorMinorPatchBuild
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        vectorDrawables.useSupportLibrary = true
+
+        multiDexEnabled true
+
+        buildConfigField "String", "USER_AGENT_APP_NAME", "\"CheeseDemo-Android\""
+        buildConfigField "String", "SERVICE_BASE_URL", "\"http://10.0.2.2:8080/\""
+    }
+
+    lintOptions {
+        abortOnError true
+        disable 'InvalidPackage'
+        warning 'MissingTranslation'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+        exclude 'LICENSE.txt'
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix '.dev'
+            versionNameSuffix '-DEV'
+            buildConfigField "String", "BUILD_TIME", "\"DEBUG\""
+            buildConfigField "String", "GIT_SHA", "\"DEBUG\""
+        }
+        release {
+            buildConfigField "long", "BUILD_TIME", "\"${buildTime}\""
+            buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
+        }
     }
 }
 
@@ -24,8 +102,7 @@ ext {
     okhttpVersion = '3.6.0'
     pocketKnifeVersion = '3.2.1'
     pocketBusVersion = '1.2.0'
-    playServicesVersion = '10.2.1'
-    firebaseVersion = '10.2.1'
+    jacksonVersion = '2.8.7'
     materialDialogs = '0.9.4.2'
 }
 
@@ -56,6 +133,16 @@ dependencies {
     compile 'com.devbrackets.android:recyclerext:2.1.0'
     compile "com.jakewharton.timber:timber:4.5.1"
 
+    // Network
+    compile 'com.squareup.retrofit2:converter-jackson:2.2.0'
+    compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    compile "com.squareup.okhttp3:okhttp:$okhttpVersion"
+    compile "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile('com.github.bumptech.glide:okhttp3-integration:1.4.0') {
+        exclude group: 'glide-parent'
+    }
+
     // RxJava 2
     compile 'io.reactivex.rxjava2:rxjava:2.0.8'
     compile 'io.reactivex.rxjava2:rxkotlin:2.0.0'
@@ -65,6 +152,9 @@ dependencies {
     compile 'com.github.akarnokd:rxjava2-interop:0.9.5'
 
     compile 'net.zetetic:android-database-sqlcipher:3.5.6'
+
+    // Retrolambda
+    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.5.1'
 
     testCompile 'junit:junit:4.12'
 }

@@ -1,8 +1,12 @@
 package com.vikingsen.cheesedemo.inject;
 
 import android.app.Application;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.vikingsen.cheesedemo.model.database.AppDatabaseConfig;
+import com.vikingsen.cheesedemo.util.SchedulerProvider;
+import com.vikingsen.cheesedemo.util.SchedulerProvider.AppSchedulerProvider;
 
 import org.dbtools.android.domain.config.DatabaseConfig;
 
@@ -27,8 +31,20 @@ class AppModule {
 
     @Provides
     @Singleton
+    SharedPreferences provideSharedPreferences(Application application) {
+        return PreferenceManager.getDefaultSharedPreferences(application);
+    }
+
+    @Provides
+    @Singleton
     DatabaseConfig provideDatabaseConfig(Application application) {
         return new AppDatabaseConfig(application);
+    }
+
+    @Provides
+    @Singleton
+    SchedulerProvider provideSchedulerProvider() {
+        return new AppSchedulerProvider();
     }
 
 }
