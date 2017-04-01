@@ -7,6 +7,7 @@ import com.vikingsen.cheesedemo.model.database.cheese.Cheese;
 import com.vikingsen.cheesedemo.model.database.cheese.CheeseManager;
 import com.vikingsen.cheesedemo.model.webservice.dto.CheeseDto;
 
+import org.dbtools.android.domain.DatabaseTableChange;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.temporal.ChronoUnit;
 import org.threeten.bp.temporal.TemporalUnit;
@@ -20,6 +21,7 @@ import javax.inject.Singleton;
 
 import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.Maybe;
+import io.reactivex.Observable;
 import io.reactivex.Single;
 
 @Singleton
@@ -89,5 +91,13 @@ class CheeseLocalDataSource {
         cheese.setCached(LocalDateTime.now());
         cheeseManager.save(cheese);
         return cheese;
+    }
+
+    Observable<DatabaseTableChange> dataChanges() {
+        return RxJavaInterop.toV2Observable(cheeseManager.tableChanges());
+    }
+
+    long modelTs() {
+        return cheeseManager.getLastTableModifiedTs();
     }
 }

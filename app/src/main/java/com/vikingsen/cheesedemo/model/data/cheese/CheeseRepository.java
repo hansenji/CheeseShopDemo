@@ -3,6 +3,8 @@ package com.vikingsen.cheesedemo.model.data.cheese;
 
 import com.vikingsen.cheesedemo.model.database.cheese.Cheese;
 
+import org.dbtools.android.domain.DatabaseTableChange;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -10,6 +12,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Maybe;
+import io.reactivex.Observable;
 import io.reactivex.Single;
 
 @Singleton
@@ -49,6 +52,18 @@ public class CheeseRepository {
                             }
                         }
                 );
+    }
+
+    public long modelTs() {
+        return localDataSource.modelTs();
+    }
+
+    public Observable<DatabaseTableChange> dataChanges() {
+        return localDataSource.dataChanges();
+    }
+
+    public boolean isUpdatedSince(long modelTs) {
+        return modelTs() != modelTs;
     }
 
     private Single<List<Cheese>> getAndSaveRemoteCheeses() {

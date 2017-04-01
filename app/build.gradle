@@ -59,6 +59,7 @@ android {
 
         buildConfigField "String", "USER_AGENT_APP_NAME", "\"CheeseDemo-Android\""
         buildConfigField "String", "SERVICE_BASE_URL", "\"http://10.0.2.2:8080/\""
+        buildConfigField "String", "IMAGE_BASE_URL", "\"http://10.0.2.2:8080\""
     }
 
     lintOptions {
@@ -79,6 +80,7 @@ android {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/services/javax.annotation.processing.Processor'
         exclude 'LICENSE.txt'
+        exclude 'META-INF/rxjava.properties'
     }
 
     buildTypes {
@@ -104,6 +106,7 @@ ext {
     pocketBusVersion = '1.2.0'
     jacksonVersion = '2.8.7'
     materialDialogs = '0.9.4.2'
+    butterKnifeVersion = '8.5.1'
 }
 
 dependencies {
@@ -125,6 +128,8 @@ dependencies {
     // UI
     compile "com.vikingsen:pocketknife-core:${pocketKnifeVersion}"
     annotationProcessor "com.vikingsen:pocketknife-compiler:${pocketKnifeVersion}"
+    compile "com.jakewharton:butterknife:$butterKnifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
     compile "com.afollestad.material-dialogs:commons:$materialDialogs"
 
     // Code
