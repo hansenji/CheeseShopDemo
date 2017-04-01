@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dbSchema xmlns='https://github.com/jeffdcamp/dbtools-gen'
+          xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+          xsi:schemaLocation='https://github.com/jeffdcamp/dbtools-gen dbschema.xsd'>
+    <database name="main" fieldsDefaultNotNull="true"> <!-- recommended: use fieldsDefaultNotNull="true" to make all table fields default notNull -->
+        <table name="cheese">
+            <field name="id" jdbcDataType="BIGINT" primaryKey="true" increment="false"/> <!-- This id comes from the server no auto increment -->
+            <field name="name" jdbcDataType="VARCHAR"/>
+            <field name="description" jdbcDataType="VARCHAR"/>
+            <field name="image_url" jdbcDataType="VARCHAR"/>
+            <field name="cache_time" jdbcDataType="DATETIME"/>
+        </table>
+        <table name="comment">
+            <field name="id" jdbcDataType="BIGINT" primaryKey="true" increment="true"/>
+            <field name="cheese_id" jdbcDataType="BIGINT" foreignKeyTable="cheese" foreignKeyField="id"/>
+            <field name="user" jdbcDataType="VARCHAR"/>
+            <field name="comment" jdbcDataType="VARCHAR"/>
+            <field name="created" jdbcDataType="DATE"/>
+            <field name="updated" jdbcDataType="DATE"/>
+            <field name="cached" jdbcDataType="DATETIME"/>
+        </table>
+    </database>
+</dbSchema>

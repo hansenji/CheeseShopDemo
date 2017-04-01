@@ -1,11 +1,20 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+    ext.kotlin_version = '1.1.1'
+    ext.dbtoolsVersion = '8.2.1'
+
     repositories {
+        mavenCentral()
         jcenter()
+        mavenLocal()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath "org.dbtools:gradle-dbtools-plugin:$dbtoolsVersion"
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.14.0' // version plugin support
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -14,8 +23,12 @@ buildscript {
 
 allprojects {
     repositories {
+        mavenCentral()
         jcenter()
+        mavenLocal()
     }
+
+    apply plugin: 'com.github.ben-manes.versions' // ./gradlew dependencyUpdates -Drevision=release
 }
 
 task clean(type: Delete) {
