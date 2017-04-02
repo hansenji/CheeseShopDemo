@@ -13,7 +13,7 @@
             <field name="image_url" jdbcDataType="VARCHAR"/>
             <field name="cached" jdbcDataType="DATETIME"/>
 
-            <!-- IF NOTHING IS CREATED BY THE USER NO PRIMARY KEY IS NEEDED -->
+            <!-- TODO - IF NOTHING IS CREATED BY THE USER NO PRIMARY KEY IS NEEDED -->
             <unique sqliteOnConflict="REPLACE">
                 <uniqueField name="id"/>
             </unique>
