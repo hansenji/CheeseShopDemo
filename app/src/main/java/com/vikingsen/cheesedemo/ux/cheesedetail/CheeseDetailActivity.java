@@ -21,7 +21,10 @@ import com.vikingsen.cheesedemo.BuildConfig;
 import com.vikingsen.cheesedemo.R;
 import com.vikingsen.cheesedemo.inject.Injector;
 import com.vikingsen.cheesedemo.model.database.cheese.Cheese;
+import com.vikingsen.cheesedemo.model.database.comment.Comment;
 import com.vikingsen.cheesedemo.util.DrawableUtil;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -106,6 +109,12 @@ public class CheeseDetailActivity extends AppCompatActivity implements CheeseDet
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        commentMenuItem.setEnabled(adapter.hasCheese());
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -115,7 +124,7 @@ public class CheeseDetailActivity extends AppCompatActivity implements CheeseDet
                 // TODO: 4/2/17 Add Comment
                 break;
             case R.id.menu_item_refresh:
-                presenter.loadCheese(true);
+                presenter.reload();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -131,15 +140,15 @@ public class CheeseDetailActivity extends AppCompatActivity implements CheeseDet
     public void showCheese(Cheese cheese) {
         adapter.setCheese(cheese);
         loadBackdrop(cheese.getImageUrl());
-        enableComments(true);
+        supportInvalidateOptionsMenu();
     }
 
     @Override
-    public void showError() {
+    public void showCheeseError() {
         Snackbar.make(cdCoordinatorLayout, R.string.failed_to_load_cheese, Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.retry, v -> presenter.loadCheese(true))
+                .setAction(R.string.retry, v -> presenter.reload())
                 .show();
-        enableComments(false);
+        supportInvalidateOptionsMenu();
         showFab(false);
     }
 
@@ -147,7 +156,21 @@ public class CheeseDetailActivity extends AppCompatActivity implements CheeseDet
     public void showMissingCheese() {
         Snackbar.make(cdCoordinatorLayout, R.string.unable_to_find_cheese, Snackbar.LENGTH_INDEFINITE).show();
         showFab(false);
-        enableComments(false);
+        supportInvalidateOptionsMenu();
+    }
+
+    @Override
+    public void showComments(List<Comment> comments) {
+        if (comments.isEmpty() && adapter.getCommentCount() > 0) {
+            showCommentError();
+        } else {
+            adapter.setComments(comments);
+        }
+    }
+
+    @Override
+    public void showCommentError() {
+
     }
 
     private void setupRecyclerView() {
@@ -166,10 +189,6 @@ public class CheeseDetailActivity extends AppCompatActivity implements CheeseDet
         } else {
             cdFab.hide();
         }
-    }
-
-    private void enableComments(boolean enable) {
-        commentMenuItem.setEnabled(enable);
     }
 
     private void loadBackdrop(String imageUrl) {

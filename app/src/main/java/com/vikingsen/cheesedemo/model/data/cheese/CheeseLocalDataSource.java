@@ -52,15 +52,22 @@ class CheeseLocalDataSource {
     List<Cheese> saveCheeses(@NonNull List<CheeseDto> cheeseDtos) {
         LocalDateTime cached = LocalDateTime.now();
         List<Cheese> cheeses = new ArrayList<>(cheeseDtos.size());
-        for (CheeseDto dto : cheeseDtos) {
-            Cheese cheese = new Cheese();
-            cheese.setId(dto.getId());
-            cheese.setName(dto.getName());
-            cheese.setDescription(dto.getDescription());
-            cheese.setImageUrl(dto.getImage());
-            cheese.setCached(cached);
-            cheeseManager.save(cheese);
-            cheeses.add(cheese);
+        cheeseManager.beginTransaction();
+        boolean commit = false;
+        try {
+            for (CheeseDto dto : cheeseDtos) {
+                Cheese cheese = new Cheese();
+                cheese.setId(dto.getId());
+                cheese.setName(dto.getName());
+                cheese.setDescription(dto.getDescription());
+                cheese.setImageUrl(dto.getImage());
+                cheese.setCached(cached);
+                cheeseManager.save(cheese);
+                cheeses.add(cheese);
+            }
+            commit = true;
+        }finally {
+            cheeseManager.endTransaction(commit);
         }
         return cheeses;
     }

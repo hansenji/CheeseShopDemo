@@ -63,7 +63,7 @@ public class CheeseRepository {
         return remoteDataSource.getCheeses().map(cheeses -> localDataSource.saveCheeses(cheeses));
     }
 
-    private Maybe<Cheese> getAndSaveRemoteCheese(Long cheeseId) {
+    private Maybe<Cheese> getAndSaveRemoteCheese(long cheeseId) {
         return remoteDataSource.getCheese(cheeseId).map(cheese -> localDataSource.saveCheese(cheese));
     }
 

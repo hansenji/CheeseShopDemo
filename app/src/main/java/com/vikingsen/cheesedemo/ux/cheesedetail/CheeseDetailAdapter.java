@@ -126,6 +126,14 @@ class CheeseDetailAdapter extends RecyclerHeaderAdapter<CheeseDetailAdapter.Head
         notifyDataSetChanged();
     }
 
+    int getCommentCount() {
+        return comments.size();
+    }
+
+    boolean hasCheese() {
+        return cheese != null;
+    }
+
     @NonNull
     private PriceViewHolder createPriceViewHolder(@NonNull ViewGroup parent) {
         PriceViewHolder viewHolder = new PriceViewHolder(parent);

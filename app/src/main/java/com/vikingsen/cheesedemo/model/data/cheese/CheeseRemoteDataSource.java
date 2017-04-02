@@ -44,7 +44,7 @@ class CheeseRemoteDataSource {
                     Timber.w("Network not connected");
                 }
             } catch (Exception e) {
-                Timber.e(e, "Exception fetching data");
+                Timber.e(e, "Exception fetching cheese");
             }
             emitter.onSuccess(Collections.emptyList());
         });
@@ -64,7 +64,7 @@ class CheeseRemoteDataSource {
                     Timber.w("Network not connected");
                 }
             } catch (Exception e) {
-                Timber.e(e, "Exception fetching data");
+                Timber.e(e, "Exception fetching cheese %d", cheeseId);
             }
             emitter.onComplete();
         });
