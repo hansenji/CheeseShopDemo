@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.vikingsen.cheesedemo.BuildConfig;
 import com.vikingsen.cheesedemo.R;
 import com.vikingsen.cheesedemo.inject.Injector;
+import com.vikingsen.cheesedemo.model.data.price.Price;
 import com.vikingsen.cheesedemo.model.database.cheese.Cheese;
 import com.vikingsen.cheesedemo.model.database.comment.Comment;
 import com.vikingsen.cheesedemo.util.DrawableUtil;
@@ -132,10 +133,6 @@ public class CheeseDetailActivity extends AppCompatActivity implements CheeseDet
         return true;
     }
 
-    //    @Override
-//    public void showLoading(boolean loading) {
-//    }
-
     @Override
     public void showCheese(Cheese cheese) {
         adapter.setCheese(cheese);
@@ -149,13 +146,13 @@ public class CheeseDetailActivity extends AppCompatActivity implements CheeseDet
                 .setAction(R.string.retry, v -> presenter.reload())
                 .show();
         supportInvalidateOptionsMenu();
-        showFab(false);
+        updateFabVisibility();
     }
 
     @Override
     public void showMissingCheese() {
         Snackbar.make(cdCoordinatorLayout, R.string.unable_to_find_cheese, Snackbar.LENGTH_INDEFINITE).show();
-        showFab(false);
+        updateFabVisibility();
         supportInvalidateOptionsMenu();
     }
 
@@ -173,6 +170,24 @@ public class CheeseDetailActivity extends AppCompatActivity implements CheeseDet
 
     }
 
+    @Override
+    public void showPriceLoading(boolean loading) {
+        adapter.setLoadingPrice(loading);
+        updateFabVisibility();
+    }
+
+    @Override
+    public void showPrice(Price price) {
+        adapter.setPrice(price);
+        updateFabVisibility();
+    }
+
+    @Override
+    public void showPriceError(boolean networkDisconnected) {
+        adapter.setPrice(null);
+        updateFabVisibility();
+    }
+
     private void setupRecyclerView() {
         cdRecyclerView.setAdapter(adapter);
         cdRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -180,11 +195,11 @@ public class CheeseDetailActivity extends AppCompatActivity implements CheeseDet
 
     private void setupFab() {
         cdFab.setOnClickListener(v -> Snackbar.make(cdCoordinatorLayout, R.string.thank_you_for_purchase, Snackbar.LENGTH_SHORT).show());
-        showFab(false);
+        updateFabVisibility();
     }
 
-    private void showFab(boolean show) {
-        if (show) {
+    private void updateFabVisibility() {
+        if (!adapter.isLoadingPrice() && adapter.hasPrice()) {
             cdFab.show();
         } else {
             cdFab.hide();

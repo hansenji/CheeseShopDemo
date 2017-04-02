@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.devbrackets.android.recyclerext.adapter.RecyclerHeaderAdapter;
 import com.vikingsen.cheesedemo.R;
+import com.vikingsen.cheesedemo.model.data.price.Price;
 import com.vikingsen.cheesedemo.model.database.cheese.Cheese;
 import com.vikingsen.cheesedemo.model.database.comment.Comment;
 
@@ -21,6 +22,7 @@ import org.threeten.bp.format.FormatStyle;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,6 +47,9 @@ class CheeseDetailAdapter extends RecyclerHeaderAdapter<CheeseDetailAdapter.Head
     private Cheese cheese = null;
     @NonNull
     private List<Comment> comments = new ArrayList<>();
+    @Nullable
+    private Price price = null;
+    private boolean loadingPrice = false;
 
     @NonNull
     @Override
@@ -58,7 +63,7 @@ class CheeseDetailAdapter extends RecyclerHeaderAdapter<CheeseDetailAdapter.Head
     public RecyclerView.ViewHolder onCreateChildViewHolder(@NonNull ViewGroup parent, int viewType) {
         switch (viewType) {
             case TYPE_PRICE:
-                return createPriceViewHolder(parent);
+                return new PriceViewHolder(parent);
             case TYPE_DESCRIPTION:
                 return new DescriptionViewHolder(parent);
             case TYPE_COMMENT:
@@ -116,14 +121,28 @@ class CheeseDetailAdapter extends RecyclerHeaderAdapter<CheeseDetailAdapter.Head
         }
     }
 
-    public void setCheese(Cheese cheese) {
+    public void setCheese(@Nullable Cheese cheese) {
         this.cheese = cheese;
         notifyDataSetChanged();
     }
 
-    public void setComments(List<Comment> comments) {
+    public void setComments(@NonNull List<Comment> comments) {
         this.comments = comments;
         notifyDataSetChanged();
+    }
+
+    public void setPrice(@Nullable Price price) {
+        this.price = price;
+        notifyDataSetChanged();
+    }
+
+    void setLoadingPrice(boolean loadingPrice) {
+        this.loadingPrice = loadingPrice;
+        notifyDataSetChanged();
+    }
+
+    boolean isLoadingPrice() {
+        return loadingPrice;
     }
 
     int getCommentCount() {
@@ -134,14 +153,18 @@ class CheeseDetailAdapter extends RecyclerHeaderAdapter<CheeseDetailAdapter.Head
         return cheese != null;
     }
 
-    @NonNull
-    private PriceViewHolder createPriceViewHolder(@NonNull ViewGroup parent) {
-        PriceViewHolder viewHolder = new PriceViewHolder(parent);
-        return viewHolder;
+    boolean hasPrice() {
+        return price != null;
     }
 
     private void bindPriceViewHolder(PriceViewHolder holder) {
-        holder.priceTextView.setText(R.string.price_unavailable);
+        if (loadingPrice) {
+            holder.priceTextView.setText(R.string.fetching_price);
+        } else if (price != null) {
+            holder.priceTextView.setText(String.format(Locale.getDefault(), "$%.2f", price.getPrice()));
+        } else {
+            holder.priceTextView.setText(R.string.price_unavailable);
+        }
     }
 
     private void bindDescriptionViewHolder(DescriptionViewHolder holder) {

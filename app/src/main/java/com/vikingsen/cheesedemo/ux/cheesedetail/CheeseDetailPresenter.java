@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 
 import com.vikingsen.cheesedemo.model.data.cheese.CheeseRepository;
 import com.vikingsen.cheesedemo.model.data.comment.CommentRepository;
+import com.vikingsen.cheesedemo.model.data.price.PriceRepository;
+import com.vikingsen.cheesedemo.util.NetworkDisconnectedException;
 import com.vikingsen.cheesedemo.util.SchedulerProvider;
 
 import javax.inject.Inject;
@@ -18,6 +20,7 @@ class CheeseDetailPresenter {
     private final CheeseDetailContract.View view;
     private final CheeseRepository cheeseRepository;
     private final CommentRepository commentRepository;
+    private final PriceRepository priceRepository;
     private final SchedulerProvider schedulerProvider;
 
     private long cheeseId = -1;
@@ -25,16 +28,19 @@ class CheeseDetailPresenter {
     @Nullable
     private Disposable cheeseDisposable = null;
     private Disposable commentDisposable = null;
+    private Disposable priceDisposable = null;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @Inject
     CheeseDetailPresenter(CheeseDetailContract.View view,
                           CheeseRepository cheeseRepository,
                           CommentRepository commentRepository,
+                          PriceRepository priceRepository,
                           SchedulerProvider schedulerProvider) {
         this.view = view;
         this.cheeseRepository = cheeseRepository;
         this.commentRepository = commentRepository;
+        this.priceRepository = priceRepository;
         this.schedulerProvider = schedulerProvider;
     }
 
@@ -45,6 +51,7 @@ class CheeseDetailPresenter {
     void start() {
         loadCheese(false);
         loadComments(false);
+        loadPrice(false);
     }
 
     void stop() {
@@ -54,6 +61,7 @@ class CheeseDetailPresenter {
     void reload() {
         loadCheese(true);
         loadComments(true);
+        loadPrice(true);
     }
 
     private void loadCheese(boolean forceRefresh) {
@@ -68,14 +76,10 @@ class CheeseDetailPresenter {
                 .subscribeOn(schedulerProvider.computation())
                 .observeOn(schedulerProvider.ui())
                 .subscribe(
-                        cheese -> {
-                            view.showCheese(cheese);
-//                            view.showLoading(false);
-                        },
+                        cheese -> view.showCheese(cheese),
                         throwable -> {
                             Timber.e(throwable, "Failed to load cheese %d", cheeseId);
                             view.showCheeseError();
-//                            view.showLoading(false);
                         },
                         () -> {
                             Timber.w("No cheese found for id %d", cheeseId);
@@ -99,6 +103,31 @@ class CheeseDetailPresenter {
                         throwable -> {
                             Timber.e(throwable, "Failed to load comments $%d", cheeseId);
                             view.showCommentError();
+                        }
+                );
+    }
+
+    private void loadPrice(boolean forceRefresh) {
+        if (cheeseId == -1L) {
+            throw new IllegalStateException("You must call init before calling loadCheese()");
+        }
+        if (priceDisposable != null) {
+            priceDisposable.dispose();
+            compositeDisposable.remove(priceDisposable);
+        }
+        view.showPriceLoading(true);
+        priceDisposable = priceRepository.getPrice(cheeseId, forceRefresh)
+                .subscribeOn(schedulerProvider.computation())
+                .observeOn(schedulerProvider.ui())
+                .subscribe(
+                        price -> {
+                            view.showPrice(price);
+                            view.showPriceLoading(false);
+                        },
+                        throwable -> {
+                            Timber.e(throwable, "Failed to load price $%d", cheeseId);
+                            view.showPriceError(throwable instanceof NetworkDisconnectedException);
+                            view.showPriceLoading(false);
                         }
                 );
     }

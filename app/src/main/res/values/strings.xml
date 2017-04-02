@@ -11,4 +11,5 @@
     <string name="price_unavailable">Price unavailable</string>
     <string name="add_comment">Add Comment</string>
     <string name="refresh">Refresh</string>
+    <string name="fetching_price">Fetching price…</string>
 </resources>
