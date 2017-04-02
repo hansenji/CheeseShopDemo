@@ -57,7 +57,7 @@ class CheeseLocalDataSource {
     boolean isCheeseStale() {
         LocalDateTime cacheExpiration = LocalDateTime.now().minus(CACHE_VALID_AMOUNT, CACHE_VALID_UNIT);
 
-        // TODO - DOUBLE CHECK THAT THE CHECK MATCHES THE METHOD NAME (isBefore vs isAfter)
+        // GOTCHA - DOUBLE CHECK THAT THE CHECK MATCHES THE METHOD NAME (isBefore vs isAfter)
         return cheeseManager.findOldestCacheDate().isBefore(cacheExpiration);
     }
 
