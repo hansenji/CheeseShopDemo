@@ -36,7 +36,7 @@ class CheeseLocalDataSource {
     }
 
     Single<List<Cheese>> getCheeses() {
-        return RxJavaInterop.toV2Observable(cheeseManager.findAllRx()).single(Collections.emptyList());
+        return RxJavaInterop.toV2Observable(cheeseManager.findAllCheesesRx()).single(Collections.emptyList());
     }
 
     boolean isCheeseStale() {

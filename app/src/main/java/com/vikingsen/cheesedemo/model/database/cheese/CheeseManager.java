@@ -14,6 +14,10 @@ import org.dbtools.android.domain.date.DBToolsThreeTenFormatter;
 import org.dbtools.query.sql.SQLQueryBuilder;
 import org.threeten.bp.LocalDateTime;
 
+import java.util.List;
+
+import rx.Observable;
+
 
 @javax.inject.Singleton
 public class CheeseManager extends CheeseBaseManager {
@@ -47,5 +51,9 @@ public class CheeseManager extends CheeseBaseManager {
             return DAWN_OF_TIME;
         }
         return cached;
+    }
+
+    public Observable<List<Cheese>> findAllCheesesRx() {
+        return findAllOrderByRx(CheeseConst.C_NAME);
     }
 }

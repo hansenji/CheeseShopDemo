@@ -17,8 +17,8 @@ import javax.servlet.http.HttpServletRequest
 @RequestMapping("/api/v1/cheese")
 class CheeseController(val cheeseRepository: CheeseRepository) {
     @GetMapping()
-    fun findAll(): Iterable<Cheese>? {
-        return cheeseRepository.findAll()
+    fun findAll(): List<Cheese> {
+        return cheeseRepository.findAllByOrderByNameAsc()
     }
 
     @GetMapping("/{id}")
