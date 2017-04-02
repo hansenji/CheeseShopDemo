@@ -39,8 +39,25 @@ class CheeseLocalDataSource {
         return RxJavaInterop.toV2Observable(cheeseManager.findAllCheesesRx()).single(Collections.emptyList());
     }
 
+    Maybe<Cheese> getCheese(Long cheeseId) {
+        return Maybe.create(emitter -> {
+            try {
+                Cheese cheese = cheeseManager.findByCheeseId(cheeseId);
+                if (cheese != null) {
+                    emitter.onSuccess(cheese);
+                } else {
+                    emitter.onComplete();
+                }
+            } catch (Exception e) {
+                emitter.onError(e);
+            }
+        });
+    }
+
     boolean isCheeseStale() {
         LocalDateTime cacheExpiration = LocalDateTime.now().minus(CACHE_VALID_AMOUNT, CACHE_VALID_UNIT);
+
+        // TODO - DOUBLE CHECK THAT THE CHECK MATCHES THE METHOD NAME (isBefore vs isAfter)
         return cheeseManager.findOldestCacheDate().isBefore(cacheExpiration);
     }
 
@@ -70,21 +87,6 @@ class CheeseLocalDataSource {
             cheeseManager.endTransaction(commit);
         }
         return cheeses;
-    }
-
-    Maybe<Cheese> getCheese(Long cheeseId) {
-        return Maybe.create(emitter -> {
-            try {
-                Cheese cheese = cheeseManager.findByCheeseId(cheeseId);
-                if (cheese != null) {
-                    emitter.onSuccess(cheese);
-                } else {
-                    emitter.onComplete();
-                }
-            } catch (Exception e) {
-                emitter.onError(e);
-            }
-        });
     }
 
     Cheese saveCheese(@NonNull CheeseDto dto) {

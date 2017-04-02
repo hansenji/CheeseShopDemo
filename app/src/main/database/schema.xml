@@ -4,11 +4,16 @@
           xsi:schemaLocation='https://github.com/jeffdcamp/dbtools-gen dbschema.xsd'>
     <database name="main" fieldsDefaultNotNull="true"> <!-- recommended: use fieldsDefaultNotNull="true" to make all table fields default notNull -->
         <table name="cheese">
-            <field name="id" jdbcDataType="BIGINT"/> <!-- This id comes from the server no auto increment -->
+
+            <!-- TODO - THIS ID COMES FROM THE SERVER NO PRIMARY KEY NOR AUTO INCREMENT -->
+            <field name="id" jdbcDataType="BIGINT" index="true"/>
+
             <field name="name" jdbcDataType="VARCHAR"/>
             <field name="description" jdbcDataType="VARCHAR"/>
             <field name="image_url" jdbcDataType="VARCHAR"/>
             <field name="cached" jdbcDataType="DATETIME"/>
+
+            <!-- IF NOTHING IS CREATED BY THE USER NO PRIMARY KEY IS NEEDED -->
             <unique sqliteOnConflict="REPLACE">
                 <uniqueField name="id"/>
             </unique>
@@ -21,6 +26,13 @@
             <field name="created" jdbcDataType="DATE"/>
             <field name="updated" jdbcDataType="DATE" notNull="false"/>
             <field name="cached" jdbcDataType="DATETIME"/>
+
+            <!-- TODO - IF USER CREATABLE CONTENT FIND A KEY YOU CAN GEN THAT MATCHES SERVER-->
+            <!-- TODO - GUIDs WORK WELL -->
+            <unique>
+                <uniqueField name="cheese_id"/>
+                <uniqueField name="user"/>
+            </unique>
         </table>
     </database>
 </dbSchema>

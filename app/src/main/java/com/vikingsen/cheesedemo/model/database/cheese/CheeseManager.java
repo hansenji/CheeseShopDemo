@@ -54,6 +54,8 @@ public class CheeseManager extends CheeseBaseManager {
     }
 
     public Observable<List<Cheese>> findAllCheesesRx() {
+
+        // TODO - MATCH ORDERING FROM SERVER
         return findAllOrderByRx(CheeseConst.C_NAME);
     }
 }
