@@ -40,7 +40,7 @@ public class CommentConst {
         "user TEXT NOT NULL," + 
         "comment TEXT NOT NULL," + 
         "created TEXT NOT NULL," + 
-        "updated TEXT NOT NULL," + 
+        "updated TEXT," + 
         "cached TEXT NOT NULL," + 
         "FOREIGN KEY (cheese_id) REFERENCES cheese (id)" + 
         ");" + 

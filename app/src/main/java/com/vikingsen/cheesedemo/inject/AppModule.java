@@ -1,7 +1,9 @@
 package com.vikingsen.cheesedemo.inject;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.preference.PreferenceManager;
 
 import com.vikingsen.cheesedemo.model.database.AppDatabaseConfig;
@@ -33,6 +35,12 @@ class AppModule {
     @Singleton
     SharedPreferences provideSharedPreferences(Application application) {
         return PreferenceManager.getDefaultSharedPreferences(application);
+    }
+
+    @Provides
+    @Singleton
+    ConnectivityManager provideConnectivityManager(Application application) {
+        return (ConnectivityManager) application.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
     @Provides

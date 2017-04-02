@@ -5,9 +5,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardElevation="4dp"
+    app:cardElevation="2dp"
     android:foreground="?attr/selectableItemBackground"
     android:padding="4dp"
+    app:cardUseCompatPadding="true"
     >
 
     <android.support.constraint.ConstraintLayout

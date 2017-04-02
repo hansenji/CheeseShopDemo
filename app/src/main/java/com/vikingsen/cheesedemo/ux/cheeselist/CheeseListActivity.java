@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.devbrackets.android.recyclerext.layoutmanager.AutoColumnGridLayoutManager;
 import com.vikingsen.cheesedemo.R;
 import com.vikingsen.cheesedemo.inject.Injector;
+import com.vikingsen.cheesedemo.intent.InternalIntent;
 import com.vikingsen.cheesedemo.model.database.cheese.Cheese;
 
 import java.util.List;
@@ -28,6 +29,8 @@ public class CheeseListActivity extends AppCompatActivity implements CheeseListC
 
     @Inject
     CheeseListPresenter presenter;
+    @Inject
+    InternalIntent internalIntent;
 
     @BindView(R.id.clToolbar)
     Toolbar clToolbar;
@@ -96,7 +99,7 @@ public class CheeseListActivity extends AppCompatActivity implements CheeseListC
     private void setupRecyclerView() {
         adapter = new CheeseListAdapter(Glide.with(this));
         adapter.setOnClickListener(cheese -> {
-            // TODO: 4/1/17 Add onClickListener
+            startActivity(internalIntent.getCheeseDetailIntent(this, cheese.getId(), cheese.getName()));
         });
 
         Resources resources = getResources();

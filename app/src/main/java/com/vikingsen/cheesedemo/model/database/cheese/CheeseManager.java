@@ -25,6 +25,10 @@ public class CheeseManager extends CheeseBaseManager {
         super(databaseManager);
     }
 
+    public Cheese findByCheeseId(long cheeseId) {
+        return findBySelection(CheeseConst.C_ID + "=?", SQLQueryBuilder.toSelectionArgs(cheeseId), null);
+    }
+
     public LocalDateTime findOldestCacheDate() {
         LocalDateTime cached = DBToolsThreeTenFormatter.dbStringToLocalDateTime(
                 findValueBySelection(String.class, CheeseConst.C_CACHED, null, null, CheeseConst.C_CACHED + " DESC", null)

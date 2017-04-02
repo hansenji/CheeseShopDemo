@@ -3,4 +3,12 @@
     <string name="cheese_shop">Cheese Shop</string>
     <string name="retry">Retry</string>
     <string name="failed_to_refresh_cheeses">Failed to refresh cheeses.</string>
+    <string name="comments">Comments</string>
+    <string name="failed_to_load_cheese">Failed to load cheese.</string>
+    <string name="unable_to_find_cheese">Unable to find cheese</string>
+    <string name="thank_you_for_purchase">Thank you for your purchase.</string>
+    <string name="buy">Buy</string>
+    <string name="price_unavailable">Price unavailable</string>
+    <string name="add_comment">Add Comment</string>
+    <string name="refresh">Refresh</string>
 </resources>

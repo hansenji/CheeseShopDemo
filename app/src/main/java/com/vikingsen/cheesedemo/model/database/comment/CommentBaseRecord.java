@@ -24,7 +24,7 @@ public abstract class CommentBaseRecord extends AndroidBaseRecord {
     private String user = "";
     private String comment = "";
     private org.threeten.bp.LocalDate created = org.threeten.bp.LocalDate.now();
-    private org.threeten.bp.LocalDate updated = org.threeten.bp.LocalDate.now();
+    private org.threeten.bp.LocalDate updated = null;
     private org.threeten.bp.LocalDateTime cached = org.threeten.bp.LocalDateTime.now();
 
     public CommentBaseRecord() {
@@ -96,7 +96,11 @@ public abstract class CommentBaseRecord extends AndroidBaseRecord {
         statement.bindString(2, user);
         statement.bindString(3, comment);
         statement.bindString(4, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateToDBString(created));
-        statement.bindString(5, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateToDBString(updated));
+        if (updated != null) {
+            statement.bindString(5, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateToDBString(updated));
+        } else {
+            statement.bindNull(5);
+        }
         statement.bindString(6, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateTimeToDBString(cached));
     }
 
@@ -106,7 +110,11 @@ public abstract class CommentBaseRecord extends AndroidBaseRecord {
         statement.bindString(2, user);
         statement.bindString(3, comment);
         statement.bindString(4, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateToDBString(created));
-        statement.bindString(5, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateToDBString(updated));
+        if (updated != null) {
+            statement.bindString(5, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateToDBString(updated));
+        } else {
+            statement.bindNull(5);
+        }
         statement.bindString(6, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateTimeToDBString(cached));
         statement.bindLong(7, id);
     }
@@ -178,12 +186,12 @@ public abstract class CommentBaseRecord extends AndroidBaseRecord {
         this.created = created;
     }
 
-    @javax.annotation.Nonnull
+    @javax.annotation.Nullable
     public org.threeten.bp.LocalDate getUpdated() {
         return updated;
     }
 
-    public void setUpdated(@javax.annotation.Nonnull org.threeten.bp.LocalDate updated) {
+    public void setUpdated(@javax.annotation.Nullable org.threeten.bp.LocalDate updated) {
         this.updated = updated;
     }
 
