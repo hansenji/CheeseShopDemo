@@ -23,7 +23,7 @@ class CheeseController(val cheeseRepository: CheeseRepository) {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: Long): Cheese {
-        return cheeseRepository.findOne(id).orElseThrow { CheeseNotFoundException() }
+        return cheeseRepository.findOne(id) ?: throw CheeseNotFoundException()
     }
 
     @ExceptionHandler(Throwable::class)

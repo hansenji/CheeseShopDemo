@@ -1,7 +1,7 @@
 buildscript {
 	ext {
 		kotlinVersion = '1.1.1'
-		springBootVersion = '2.0.0.BUILD-SNAPSHOT'
+		springBootVersion = '1.5.2.RELEASE'
 	}
 	repositories {
 		mavenCentral()
@@ -37,20 +37,17 @@ repositories {
 
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-actuator')
-	compile('org.springframework.boot:spring-boot-actuator-docs')
-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-	compile('org.springframework.boot:spring-boot-starter-web')
-	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+	compile "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
+	compile "org.springframework.boot:spring-boot-actuator-docs:${springBootVersion}"
+	compile "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}"
+	compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
+	compile "org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}"
 
-	compile("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}")
-	compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
+	compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
+	compile "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
 
     compile 'com.thedeanda:lorem:2.1'
 	compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.7'
 
-	runtime('com.h2database:h2')
-
-	testCompile('org.springframework.boot:spring-boot-starter-test')
-	testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
+	runtime 'com.h2database:h2:1.4.194'
 }
