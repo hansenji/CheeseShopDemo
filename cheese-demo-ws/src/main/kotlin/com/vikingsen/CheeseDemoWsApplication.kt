@@ -19,7 +19,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Random
-
+import java.util.UUID
 
 
 @SpringBootApplication
@@ -33,7 +33,7 @@ class CheeseDemoWsApplication {
     fun init(cheeseRepository: CheeseRepository,
              priceRepository: PriceRepository,
              commentRepository: CommentRepository
-             ): CommandLineRunner {
+    ): CommandLineRunner {
 
         return CommandLineRunner {
             val cheeses = ObjectMapper().readValue(javaClass.classLoader.getResource("cheese.json"), CheesesDto::class.java).cheese
@@ -57,21 +57,17 @@ class CheeseDemoWsApplication {
 
     private fun genComment(cheese: Cheese, index: Int): Comment {
         val created = getDate(index)
-        val updated = getUpdatedDate(created, index)
-        return Comment(cheeseId = cheese.id, user = getUser(index), comment = lorem.getParagraphs(1, 2), created = created, updated = updated)
+        return Comment(guid = UUID.randomUUID().toString(),
+                cheeseId = cheese.id,
+                user = getUser(index),
+                comment = lorem.getParagraphs(1, 2),
+                created = created)
     }
 
     private fun getDate(index: Int): LocalDate {
         return LocalDate.now()
                 .minusWeeks(random.nextInt(index).toLong())
                 .minusDays(random.nextInt(index * 2).toLong())
-    }
-
-    private fun getUpdatedDate(createdDate: LocalDate, index: Int): LocalDate {
-        return when (index) {
-            3 -> createdDate.plusDays(random.nextInt(index * 2).toLong())
-            else -> createdDate
-        }
     }
 
     private fun getUser(index: Int): String {
