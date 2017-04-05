@@ -158,16 +158,14 @@ public class CheeseDetailActivity extends AppCompatActivity implements CheeseDet
 
     @Override
     public void showComments(List<Comment> comments) {
-        if (comments.isEmpty() && adapter.getCommentCount() > 0) {
-            showCommentError();
-        } else {
+        if (!comments.isEmpty() || adapter.getCommentCount() <= 0) {
             adapter.setComments(comments);
         }
     }
 
     @Override
     public void showCommentError() {
-
+        // TODO DO SOMETHING
     }
 
     @Override
