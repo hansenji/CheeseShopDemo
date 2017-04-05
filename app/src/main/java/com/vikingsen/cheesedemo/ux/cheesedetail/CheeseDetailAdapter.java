@@ -26,7 +26,6 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 class CheeseDetailAdapter extends RecyclerHeaderAdapter<CheeseDetailAdapter.HeaderViewHolder, RecyclerView.ViewHolder> {
 
@@ -54,7 +53,6 @@ class CheeseDetailAdapter extends RecyclerHeaderAdapter<CheeseDetailAdapter.Head
     @NonNull
     @Override
     public HeaderViewHolder onCreateHeaderViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Timber.d("Creating Header View HOlder");
         return new HeaderViewHolder(parent);
     }
 
@@ -181,7 +179,7 @@ class CheeseDetailAdapter extends RecyclerHeaderAdapter<CheeseDetailAdapter.Head
         Comment comment = comments.get(position);
         holder.itemView.setVisibility(View.VISIBLE);
         holder.commentTextView.setText(comment.getComment());
-        holder.commentTextView.setTextColor(getTextColor(comment.getUpdated() != null));
+        holder.commentTextView.setTextColor(getTextColor(comment.isSynced()));
         holder.userTextView.setText(comment.getUser());
         holder.dateTextView.setText(getDateText(comment));
     }
@@ -193,7 +191,7 @@ class CheeseDetailAdapter extends RecyclerHeaderAdapter<CheeseDetailAdapter.Head
 
     private String getDateText(Comment comment) {
         LocalDate date;
-        date = comment.getUpdated() != null ? comment.getUpdated() : comment.getCreated();
+        date = comment.getCreated();
         return date.format(FORMATTER);
     }
 

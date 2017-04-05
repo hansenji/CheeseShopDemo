@@ -20,11 +20,12 @@ import android.database.Cursor;
 public abstract class CommentBaseRecord extends AndroidBaseRecord {
 
     private long id = 0;
+    private String guid = "";
     private long cheeseId = 0;
     private String user = "";
     private String comment = "";
     private org.threeten.bp.LocalDate created = org.threeten.bp.LocalDate.now();
-    private org.threeten.bp.LocalDate updated = null;
+    private boolean synced = false;
     private org.threeten.bp.LocalDateTime cached = org.threeten.bp.LocalDateTime.now();
 
     public CommentBaseRecord() {
@@ -56,11 +57,12 @@ public abstract class CommentBaseRecord extends AndroidBaseRecord {
 
     @Override
     public void getContentValues(DBToolsContentValues values) {
+        values.put(CommentConst.C_GUID, guid);
         values.put(CommentConst.C_CHEESE_ID, cheeseId);
         values.put(CommentConst.C_USER, user);
         values.put(CommentConst.C_COMMENT, comment);
         values.put(CommentConst.C_CREATED, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateToDBString(created));
-        values.put(CommentConst.C_UPDATED, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateToDBString(updated));
+        values.put(CommentConst.C_SYNCED, synced ? 1 : 0);
         values.put(CommentConst.C_CACHED, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateTimeToDBString(cached));
     }
 
@@ -68,11 +70,12 @@ public abstract class CommentBaseRecord extends AndroidBaseRecord {
     public Object[] getValues() {
         Object[] values = new Object[]{
             id,
+            guid,
             cheeseId,
             user,
             comment,
             org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateToDBString(created),
-            org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateToDBString(updated),
+            synced ? 1 : 0,
             org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateTimeToDBString(cached),
         };
         return values;
@@ -81,61 +84,58 @@ public abstract class CommentBaseRecord extends AndroidBaseRecord {
     public Comment copy() {
         Comment copy = new Comment();
         copy.setId(id);
+        copy.setGuid(guid);
         copy.setCheeseId(cheeseId);
         copy.setUser(user);
         copy.setComment(comment);
         copy.setCreated(created);
-        copy.setUpdated(updated);
+        copy.setSynced(synced);
         copy.setCached(cached);
         return copy;
     }
 
     @Override
     public void bindInsertStatement(StatementWrapper statement) {
-        statement.bindLong(1, cheeseId);
-        statement.bindString(2, user);
-        statement.bindString(3, comment);
-        statement.bindString(4, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateToDBString(created));
-        if (updated != null) {
-            statement.bindString(5, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateToDBString(updated));
-        } else {
-            statement.bindNull(5);
-        }
-        statement.bindString(6, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateTimeToDBString(cached));
+        statement.bindString(1, guid);
+        statement.bindLong(2, cheeseId);
+        statement.bindString(3, user);
+        statement.bindString(4, comment);
+        statement.bindString(5, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateToDBString(created));
+        statement.bindLong(6, synced ? 1 : 0);
+        statement.bindString(7, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateTimeToDBString(cached));
     }
 
     @Override
     public void bindUpdateStatement(StatementWrapper statement) {
-        statement.bindLong(1, cheeseId);
-        statement.bindString(2, user);
-        statement.bindString(3, comment);
-        statement.bindString(4, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateToDBString(created));
-        if (updated != null) {
-            statement.bindString(5, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateToDBString(updated));
-        } else {
-            statement.bindNull(5);
-        }
-        statement.bindString(6, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateTimeToDBString(cached));
-        statement.bindLong(7, id);
+        statement.bindString(1, guid);
+        statement.bindLong(2, cheeseId);
+        statement.bindString(3, user);
+        statement.bindString(4, comment);
+        statement.bindString(5, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateToDBString(created));
+        statement.bindLong(6, synced ? 1 : 0);
+        statement.bindString(7, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateTimeToDBString(cached));
+        statement.bindLong(8, id);
     }
 
     public void setContent(DBToolsContentValues values) {
+        guid = values.getAsString(CommentConst.C_GUID);
         cheeseId = values.getAsLong(CommentConst.C_CHEESE_ID);
         user = values.getAsString(CommentConst.C_USER);
         comment = values.getAsString(CommentConst.C_COMMENT);
         created = org.dbtools.android.domain.date.DBToolsThreeTenFormatter.dbStringToLocalDate(values.getAsString(CommentConst.C_CREATED));
-        updated = org.dbtools.android.domain.date.DBToolsThreeTenFormatter.dbStringToLocalDate(values.getAsString(CommentConst.C_UPDATED));
+        synced = values.getAsBoolean(CommentConst.C_SYNCED);
         cached = org.dbtools.android.domain.date.DBToolsThreeTenFormatter.dbStringToLocalDateTime(values.getAsString(CommentConst.C_CACHED));
     }
 
     @Override
     public void setContent(Cursor cursor) {
         id = cursor.getLong(cursor.getColumnIndexOrThrow(CommentConst.C_ID));
+        guid = cursor.getString(cursor.getColumnIndexOrThrow(CommentConst.C_GUID));
         cheeseId = cursor.getLong(cursor.getColumnIndexOrThrow(CommentConst.C_CHEESE_ID));
         user = cursor.getString(cursor.getColumnIndexOrThrow(CommentConst.C_USER));
         comment = cursor.getString(cursor.getColumnIndexOrThrow(CommentConst.C_COMMENT));
         created = org.dbtools.android.domain.date.DBToolsThreeTenFormatter.dbStringToLocalDate(cursor.getString(cursor.getColumnIndexOrThrow(CommentConst.C_CREATED)));
-        updated = org.dbtools.android.domain.date.DBToolsThreeTenFormatter.dbStringToLocalDate(cursor.getString(cursor.getColumnIndexOrThrow(CommentConst.C_UPDATED)));
+        synced = cursor.getInt(cursor.getColumnIndexOrThrow(CommentConst.C_SYNCED)) != 0 ? true : false;
         cached = org.dbtools.android.domain.date.DBToolsThreeTenFormatter.dbStringToLocalDateTime(cursor.getString(cursor.getColumnIndexOrThrow(CommentConst.C_CACHED)));
     }
 
@@ -149,6 +149,15 @@ public abstract class CommentBaseRecord extends AndroidBaseRecord {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    @javax.annotation.Nonnull
+    public String getGuid() {
+        return guid;
+    }
+
+    public void setGuid(@javax.annotation.Nonnull String guid) {
+        this.guid = guid;
     }
 
     public long getCheeseId() {
@@ -186,13 +195,12 @@ public abstract class CommentBaseRecord extends AndroidBaseRecord {
         this.created = created;
     }
 
-    @javax.annotation.Nullable
-    public org.threeten.bp.LocalDate getUpdated() {
-        return updated;
+    public boolean isSynced() {
+        return synced;
     }
 
-    public void setUpdated(@javax.annotation.Nullable org.threeten.bp.LocalDate updated) {
-        this.updated = updated;
+    public void setSynced(boolean synced) {
+        this.synced = synced;
     }
 
     @javax.annotation.Nonnull

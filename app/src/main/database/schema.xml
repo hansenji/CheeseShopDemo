@@ -20,19 +20,15 @@
         </table>
         <table name="comment">
             <field name="id" jdbcDataType="BIGINT" primaryKey="true" increment="true"/>
-            <field name="cheese_id" jdbcDataType="BIGINT" foreignKeyTable="cheese" foreignKeyField="id"/>
+            <!-- GOTCHA - IF USER CREATABLE CONTENT FIND A KEY YOU CAN GEN THAT MATCHES SERVER-->
+            <!-- GOTCHA - GUIDs WORK WELL -->
+            <field name="guid" jdbcDataType="VARCHAR" unique="true" index="true"/>
+            <field name="cheese_id" jdbcDataType="BIGINT" foreignKeyTable="cheese" foreignKeyField="id"/> <!-- Non Enforcing Foreign Key constraint -->
             <field name="user" jdbcDataType="VARCHAR"/>
             <field name="comment" jdbcDataType="VARCHAR"/>
             <field name="created" jdbcDataType="DATE"/>
-            <field name="updated" jdbcDataType="DATE" notNull="false"/>
+            <field name="synced" jdbcDataType="BOOLEAN"/>
             <field name="cached" jdbcDataType="DATETIME"/>
-
-            <!-- GOTCHA - IF USER CREATABLE CONTENT FIND A KEY YOU CAN GEN THAT MATCHES SERVER-->
-            <!-- GOTCHA - GUIDs WORK WELL -->
-            <unique>
-                <uniqueField name="cheese_id"/>
-                <uniqueField name="user"/>
-            </unique>
         </table>
     </database>
 </dbSchema>

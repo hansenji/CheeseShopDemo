@@ -32,7 +32,7 @@ public class CommentManager extends CommentBaseManager {
 
     public Observable<List<Comment>> findAllForCheeseIdRx(long cheeseId) {
         return findAllBySelectionRx(CommentConst.C_CHEESE_ID + "=?", SQLQueryBuilder.toSelectionArgs(cheeseId),
-                CommentConst.C_UPDATED + " DESC, " + CommentConst.C_CREATED + " DESC");
+                CommentConst.C_CREATED + " DESC");
     }
 
     public LocalDateTime findOldestCacheData(long cheeseId) {
@@ -48,5 +48,13 @@ public class CommentManager extends CommentBaseManager {
 
     public Comment findByCheeseIdAndUser(long cheeseId, String user) {
         return findBySelection(CommentConst.C_CHEESE_ID + "=? AND " + CommentConst.C_USER + "=?", SQLQueryBuilder.toSelectionArgs(cheeseId, user), null);
+    }
+
+    public Comment findByGuid(String guid) {
+        return findBySelection(CommentConst.C_GUID + "=?", SQLQueryBuilder.toSelectionArgs(guid), null);
+    }
+
+    public long findCheeseId(long id) {
+        return findValueBySelection(Long.class, CommentConst.C_CHEESE_ID, id, -1L);
     }
 }

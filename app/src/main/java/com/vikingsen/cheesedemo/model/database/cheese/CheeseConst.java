@@ -38,6 +38,8 @@ public class CheeseConst {
         "UNIQUE(id) ON CONFLICT REPLACE" + 
         ");" + 
         "" + 
+        "CREATE INDEX IF NOT EXISTS cheeseid_IDX ON cheese (id);" + 
+        "" + 
         "";
     public static final String DROP_TABLE = "DROP TABLE IF EXISTS cheese;";
     public static final String INSERT_STATEMENT = "INSERT INTO cheese (id,name,description,image_url,cached) VALUES (?,?,?,?,?)";

@@ -9,8 +9,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.Observable;
 import io.reactivex.Single;
-import io.reactivex.SingleSource;
 import kotlin.Pair;
 import timber.log.Timber;
 
@@ -29,27 +29,36 @@ public class CommentRepository {
     public Single<List<Comment>> getComments(long cheeseId, boolean forceRefresh) {
         return Single.just(new Pair<>(cheeseId, forceRefresh))
                 .flatMap(pair -> {
-                   long id = pair.getFirst();
+                    long id = pair.getFirst();
                     boolean force = pair.getSecond();
-                    Single<List<Comment>> remoteComments = getAndSaveRemoteComments(id);
-                    Single<List<Comment>> localComments = localDataSource.getComments(id);
                     if (force || localDataSource.areCommentsStale(id)) {
                         Timber.d("COMMENTS ARE STALE");
-                        return concatSources(remoteComments, localComments);
+                        return getAndSaveRemoteComments(id)
+
+                                // Always load from the database to display not yet synced comments
+                                // We will be notified through modelChanges to load from the database
+                                .map(success -> Collections.emptyList());
+
                     } else {
                         Timber.d("COMMENTS ARE FRESH");
-                        return concatSources(localComments, remoteComments);
+                        return localDataSource.getComments(id);
                     }
                 });
     }
 
-    private Single<List<Comment>> getAndSaveRemoteComments(long cheeseId) {
-        return remoteDataSource.getComments(cheeseId).map(comments -> localDataSource.saveComments(comments));
+    /**
+     * Auto subscribes on computation scheduler
+     */
+    public Observable<CommentChange> modelChanges() {
+        return localDataSource.modelChanges();
     }
 
-    private SingleSource<List<Comment>> concatSources(Single<List<Comment>> source1, Single<List<Comment>> source2) {
-        return Single.concat(source1, source2)
-                .filter(list -> !list.isEmpty())
-                .first(Collections.emptyList());
+    private Single<Boolean> getAndSaveRemoteComments(long cheeseId) {
+        return remoteDataSource.getComments(cheeseId)
+                .map(comments -> localDataSource.saveCommentsFromServer(comments))
+                .onErrorReturn(throwable -> {
+                    Timber.e(throwable, "Failed to fetch comments for cheese: %d", cheeseId);
+                    return false;
+                });
     }
 }

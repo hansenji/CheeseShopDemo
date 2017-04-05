@@ -52,6 +52,14 @@ class CheeseDetailPresenter {
         loadCheese(false);
         loadComments(false);
         loadPrice(false);
+        Disposable disposable = commentRepository.modelChanges()
+                .observeOn(schedulerProvider.ui())
+                .subscribe(modelChange -> {
+                    if (modelChange.isBulkChange() || modelChange.getCheeseId() == -1 || modelChange.getCheeseId() == cheeseId) {
+                        loadComments(false);
+                    }
+                });
+        compositeDisposable.add(disposable);
     }
 
     void stop() {

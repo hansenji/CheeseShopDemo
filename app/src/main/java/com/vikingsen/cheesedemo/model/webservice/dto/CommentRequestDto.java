@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CommentRequestDto {
+    private String guid;
+    private long cheeseId;
     private String user;
     private String comment;
 
@@ -12,9 +14,27 @@ public class CommentRequestDto {
         // Jackson Constructor
     }
 
-    public CommentRequestDto(String user, String comment) {
+    public CommentRequestDto(String guid, long cheeseId, String user, String comment) {
+        this.guid = guid;
+        this.cheeseId = cheeseId;
         this.user = user;
         this.comment = comment;
+    }
+
+    public String getGuid() {
+        return guid;
+    }
+
+    public void setGuid(String guid) {
+        this.guid = guid;
+    }
+
+    public long getCheeseId() {
+        return cheeseId;
+    }
+
+    public void setCheeseId(long cheeseId) {
+        this.cheeseId = cheeseId;
     }
 
     public String getUser() {

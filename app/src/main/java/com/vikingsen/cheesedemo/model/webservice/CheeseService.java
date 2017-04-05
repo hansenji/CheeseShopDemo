@@ -4,11 +4,11 @@ package com.vikingsen.cheesedemo.model.webservice;
 import com.vikingsen.cheesedemo.model.webservice.dto.CheeseDto;
 import com.vikingsen.cheesedemo.model.webservice.dto.CommentDto;
 import com.vikingsen.cheesedemo.model.webservice.dto.CommentRequestDto;
+import com.vikingsen.cheesedemo.model.webservice.dto.CommentResponse;
 import com.vikingsen.cheesedemo.model.webservice.dto.PriceDto;
 
 import java.util.List;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -29,6 +29,6 @@ public interface CheeseService {
     @GET("api/v1/comment/{cheeseId}")
     Call<List<CommentDto>> getComments(@Path("cheeseId") long cheeseId);
 
-    @POST("api/v1/comment/{cheeseId}")
-    Call<ResponseBody> postComment(@Path("cheeseId") long cheeseId, @Body CommentRequestDto commentRequest);
+    @POST("api/v1/comment")
+    Call<List<CommentResponse>> postComment(@Body List<CommentRequestDto> commentRequest);
 }

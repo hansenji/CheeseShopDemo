@@ -6,19 +6,18 @@ import org.threeten.bp.LocalDate;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CommentDto {
-    private long id;
+    private String guid;
     private long cheeseId;
     private String user;
     private String comment;
     private LocalDate created;
-    private LocalDate updated;
 
-    public long getId() {
-        return id;
+    public String getGuid() {
+        return guid;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setGuid(String guid) {
+        this.guid = guid;
     }
 
     public long getCheeseId() {
@@ -51,13 +50,5 @@ public class CommentDto {
 
     public void setCreated(LocalDate created) {
         this.created = created;
-    }
-
-    public LocalDate getUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(LocalDate updated) {
-        this.updated = updated;
     }
 }
