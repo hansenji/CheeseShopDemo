@@ -46,6 +46,10 @@ public class CommentRepository {
                 });
     }
 
+    public void addComment(long cheeseId, String user, String comment) {
+        localDataSource.saveNewComment(cheeseId, user, comment);
+    }
+
     /**
      * Auto subscribes on computation scheduler
      */

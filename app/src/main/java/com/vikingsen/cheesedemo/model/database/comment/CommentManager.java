@@ -37,17 +37,13 @@ public class CommentManager extends CommentBaseManager {
 
     public LocalDateTime findOldestCacheData(long cheeseId) {
         LocalDateTime cached = DBToolsThreeTenFormatter.dbStringToLocalDateTime(
-                findValueBySelection(String.class, CommentConst.C_CACHED, CommentConst.C_CHEESE_ID + "=?", SQLQueryBuilder.toSelectionArgs(cheeseId),
-                        CommentConst.C_CACHED + " DESC", null)
+                findValueBySelection(String.class, "MIN(" + CommentConst.C_CACHED + ")", CommentConst.C_CHEESE_ID + "=?",
+                        SQLQueryBuilder.toSelectionArgs(cheeseId), null)
         );
         if (cached == null) {
             return DAWN_OF_TIME;
         }
         return cached;
-    }
-
-    public Comment findByCheeseIdAndUser(long cheeseId, String user) {
-        return findBySelection(CommentConst.C_CHEESE_ID + "=? AND " + CommentConst.C_USER + "=?", SQLQueryBuilder.toSelectionArgs(cheeseId, user), null);
     }
 
     public Comment findByGuid(String guid) {

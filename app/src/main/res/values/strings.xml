@@ -12,4 +12,6 @@
     <string name="add_comment">Add Comment</string>
     <string name="refresh">Refresh</string>
     <string name="fetching_price">Fetching price…</string>
+    <string name="comment">Comment</string>
+    <string name="cancel">Cancel</string>
 </resources>

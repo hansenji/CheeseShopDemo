@@ -5,12 +5,14 @@ import com.vikingsen.cheesedemo.model.database.comment.CommentManager;
 import com.vikingsen.cheesedemo.model.webservice.dto.CommentDto;
 import com.vikingsen.cheesedemo.util.SchedulerProvider;
 
+import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.temporal.ChronoUnit;
 import org.threeten.bp.temporal.TemporalUnit;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -68,6 +70,28 @@ class CommentLocalDataSource {
             commentManager.endTransaction(commit);
         }
         return commit;
+    }
+
+    void saveNewComment(long cheeseId, String user, String text) {
+        Single.<Boolean>create(emitter -> {
+            try {
+                Comment comment = new Comment();
+                comment.setGuid(UUID.randomUUID().toString());
+                comment.setCheeseId(cheeseId);
+                comment.setUser(user);
+                comment.setComment(text);
+                comment.setCreated(LocalDate.now());
+                emitter.onSuccess(commentManager.save(comment));
+            } catch (Exception e) {
+                emitter.onError(e);
+            }
+        }).subscribeOn(schedulerProvider.computation())
+                .subscribe(saved -> {
+                    if (saved) {
+                        // TODO schedule post
+                    }
+                });
+
     }
 
     /**

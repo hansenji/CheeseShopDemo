@@ -26,7 +26,7 @@ public abstract class CommentBaseRecord extends AndroidBaseRecord {
     private String comment = "";
     private org.threeten.bp.LocalDate created = org.threeten.bp.LocalDate.now();
     private boolean synced = false;
-    private org.threeten.bp.LocalDateTime cached = org.threeten.bp.LocalDateTime.now();
+    private org.threeten.bp.LocalDateTime cached = null;
 
     public CommentBaseRecord() {
     }
@@ -102,7 +102,11 @@ public abstract class CommentBaseRecord extends AndroidBaseRecord {
         statement.bindString(4, comment);
         statement.bindString(5, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateToDBString(created));
         statement.bindLong(6, synced ? 1 : 0);
-        statement.bindString(7, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateTimeToDBString(cached));
+        if (cached != null) {
+            statement.bindString(7, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateTimeToDBString(cached));
+        } else {
+            statement.bindNull(7);
+        }
     }
 
     @Override
@@ -113,7 +117,11 @@ public abstract class CommentBaseRecord extends AndroidBaseRecord {
         statement.bindString(4, comment);
         statement.bindString(5, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateToDBString(created));
         statement.bindLong(6, synced ? 1 : 0);
-        statement.bindString(7, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateTimeToDBString(cached));
+        if (cached != null) {
+            statement.bindString(7, org.dbtools.android.domain.date.DBToolsThreeTenFormatter.localDateTimeToDBString(cached));
+        } else {
+            statement.bindNull(7);
+        }
         statement.bindLong(8, id);
     }
 
@@ -203,12 +211,12 @@ public abstract class CommentBaseRecord extends AndroidBaseRecord {
         this.synced = synced;
     }
 
-    @javax.annotation.Nonnull
+    @javax.annotation.Nullable
     public org.threeten.bp.LocalDateTime getCached() {
         return cached;
     }
 
-    public void setCached(@javax.annotation.Nonnull org.threeten.bp.LocalDateTime cached) {
+    public void setCached(@javax.annotation.Nullable org.threeten.bp.LocalDateTime cached) {
         this.cached = cached;
     }
 

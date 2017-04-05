@@ -27,8 +27,8 @@
             <field name="user" jdbcDataType="VARCHAR"/>
             <field name="comment" jdbcDataType="VARCHAR"/>
             <field name="created" jdbcDataType="DATE"/>
-            <field name="synced" jdbcDataType="BOOLEAN"/>
-            <field name="cached" jdbcDataType="DATETIME"/>
+            <field name="synced" jdbcDataType="BOOLEAN" defaultValue="false"/>
+            <field name="cached" jdbcDataType="DATETIME" notNull="false"/>
         </table>
     </database>
 </dbSchema>

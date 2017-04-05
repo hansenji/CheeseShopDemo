@@ -6,6 +6,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -35,7 +36,7 @@ import pocketknife.BindExtra;
 import pocketknife.PocketKnife;
 
 
-public class CheeseDetailActivity extends AppCompatActivity implements CheeseDetailContract.View {
+public class CheeseDetailActivity extends AppCompatActivity implements CheeseDetailContract.View, AddCommentDialogFragment.OnTextListener {
 
     public static final String EXTRA_CHEESE_ID = "EXTRA_CHEESE_ID";
     public static final String EXTRA_CHEESE_NAME = "EXTRA_CHEESE_NAME";
@@ -87,6 +88,13 @@ public class CheeseDetailActivity extends AppCompatActivity implements CheeseDet
 
         setupRecyclerView();
         setupFab();
+
+        if (savedInstanceState != null) {
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(AddCommentDialogFragment.TAG);
+            if (fragment instanceof AddCommentDialogFragment) {
+                ((AddCommentDialogFragment) fragment).setOnTextListener(this);
+            }
+        }
     }
 
     @Override
@@ -122,7 +130,7 @@ public class CheeseDetailActivity extends AppCompatActivity implements CheeseDet
                 finish();
                 break;
             case R.id.menu_item_comment:
-                // TODO: 4/2/17 Add Comment
+                showNewCommentDialog();
                 break;
             case R.id.menu_item_refresh:
                 presenter.reload();
@@ -186,6 +194,11 @@ public class CheeseDetailActivity extends AppCompatActivity implements CheeseDet
         updateFabVisibility();
     }
 
+    @Override
+    public void onTextSubmitted(CharSequence text) {
+        presenter.addNewComment(BuildConfig.USER_NAME, text.toString());
+    }
+
     private void setupRecyclerView() {
         cdRecyclerView.setAdapter(adapter);
         cdRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -208,5 +221,11 @@ public class CheeseDetailActivity extends AppCompatActivity implements CheeseDet
         Glide.with(this).load(BuildConfig.IMAGE_BASE_URL + imageUrl)
                 .centerCrop()
                 .into(cdBackdropImageView);
+    }
+
+    private void showNewCommentDialog() {
+        AddCommentDialogFragment dialogFragment = new AddCommentDialogFragment();
+        dialogFragment.setOnTextListener(this);
+        dialogFragment.show(getSupportFragmentManager(), AddCommentDialogFragment.TAG);
     }
 }

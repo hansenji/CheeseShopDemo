@@ -43,8 +43,8 @@ public class CommentConst {
         "user TEXT NOT NULL," + 
         "comment TEXT NOT NULL," + 
         "created TEXT NOT NULL," + 
-        "synced INTEGER NOT NULL," + 
-        "cached TEXT NOT NULL," + 
+        "synced INTEGER DEFAULT 0 NOT NULL," + 
+        "cached TEXT," + 
         "UNIQUE(guid)," + 
         "FOREIGN KEY (cheese_id) REFERENCES cheese (id)" + 
         ");" + 

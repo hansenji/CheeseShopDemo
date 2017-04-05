@@ -72,6 +72,10 @@ class CheeseDetailPresenter {
         loadPrice(true);
     }
 
+    void addNewComment(String user, String comment) {
+        commentRepository.addComment(cheeseId, user, comment);
+    }
+
     private void loadCheese(boolean forceRefresh) {
         if (cheeseId == -1L) {
             throw new IllegalStateException("You must call init before calling loadCheese()");
