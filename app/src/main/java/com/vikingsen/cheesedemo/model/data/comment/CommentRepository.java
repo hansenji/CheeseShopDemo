@@ -1,7 +1,10 @@
 package com.vikingsen.cheesedemo.model.data.comment;
 
 
+import android.support.annotation.WorkerThread;
+
 import com.vikingsen.cheesedemo.model.database.comment.Comment;
+import com.vikingsen.cheesedemo.model.webservice.dto.CommentRequestDto;
 
 import java.util.Collections;
 import java.util.List;
@@ -48,6 +51,18 @@ public class CommentRepository {
 
     public void addComment(long cheeseId, String user, String comment) {
         localDataSource.saveNewComment(cheeseId, user, comment);
+    }
+
+    @WorkerThread
+    public boolean syncComments() {
+        return localDataSource.getNotSyncedComments()
+                .toObservable()
+                .flatMapIterable(list -> list)
+                .map(comment -> new CommentRequestDto(comment.getGuid(), comment.getCheeseId(), comment.getUser(), comment.getComment()))
+                .toList()
+                .flatMapMaybe(requestDtos -> remoteDataSource.syncComments(requestDtos))
+                .map(responses -> localDataSource.saveSyncResponses(responses))
+                .blockingGet(false);
     }
 
     /**

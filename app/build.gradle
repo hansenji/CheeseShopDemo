@@ -139,8 +139,9 @@ dependencies {
     // Code
     compile 'com.jakewharton.threetenabp:threetenabp:1.0.5'
     compile "org.dbtools:dbtools-android:$dbtoolsVersion"
-    compile 'com.devbrackets.android:recyclerext:2.1.0'
+    compile 'com.devbrackets.android:recyclerext:2.1.1'
     compile "com.jakewharton.timber:timber:4.5.1"
+    compile 'com.evernote:android-job:1.1.8'
 
     // Network
     compile 'com.squareup.retrofit2:converter-jackson:2.2.0'

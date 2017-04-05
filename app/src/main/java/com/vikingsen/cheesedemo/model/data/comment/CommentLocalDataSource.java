@@ -1,8 +1,10 @@
 package com.vikingsen.cheesedemo.model.data.comment;
 
+import com.vikingsen.cheesedemo.job.AppJobScheduler;
 import com.vikingsen.cheesedemo.model.database.comment.Comment;
 import com.vikingsen.cheesedemo.model.database.comment.CommentManager;
 import com.vikingsen.cheesedemo.model.webservice.dto.CommentDto;
+import com.vikingsen.cheesedemo.model.webservice.dto.CommentResponse;
 import com.vikingsen.cheesedemo.util.SchedulerProvider;
 
 import org.threeten.bp.LocalDate;
@@ -20,6 +22,7 @@ import javax.inject.Singleton;
 import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import timber.log.Timber;
 
 @Singleton
 class CommentLocalDataSource {
@@ -29,11 +32,14 @@ class CommentLocalDataSource {
 
     private final CommentManager commentManager;
     private final SchedulerProvider schedulerProvider;
+    private final AppJobScheduler appJobScheduler;
 
     @Inject
-    CommentLocalDataSource(CommentManager commentManager, SchedulerProvider schedulerProvider) {
+    CommentLocalDataSource(CommentManager commentManager, SchedulerProvider schedulerProvider,
+                           AppJobScheduler appJobScheduler) {
         this.commentManager = commentManager;
         this.schedulerProvider = schedulerProvider;
+        this.appJobScheduler = appJobScheduler;
     }
 
     Single<List<Comment>> getComments(long cheeseId) {
@@ -88,10 +94,33 @@ class CommentLocalDataSource {
         }).subscribeOn(schedulerProvider.computation())
                 .subscribe(saved -> {
                     if (saved) {
-                        // TODO schedule post
+                        appJobScheduler.scheduleCommentSync();
                     }
                 });
 
+    }
+
+    Single<List<Comment>> getNotSyncedComments() {
+        return RxJavaInterop.toV2Observable(commentManager.findAllNotSyncedRx()).single(Collections.emptyList());
+    }
+
+    boolean saveSyncResponses(List<CommentResponse> responses) {
+        commentManager.beginTransaction();
+        boolean commit = false;
+        LocalDateTime cached = LocalDateTime.now();
+        try {
+            for (CommentResponse response : responses) {
+                if (response.isSuccessful()) {
+                    commentManager.setCommentSynced(response.getGuid(), cached);
+                }
+            }
+            commit = true;
+        } catch (Exception e) {
+            Timber.w(e, "Failed to save sync responses");
+        } finally {
+            commentManager.endTransaction(commit);
+        }
+        return commit;
     }
 
     /**

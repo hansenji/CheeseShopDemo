@@ -1,1 +1,1 @@
-include ':app', ':cheese-demo-ws'
+include ':app'

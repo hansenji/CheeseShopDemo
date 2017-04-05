@@ -20,4 +20,8 @@ public class CommentResponse {
     public void setStatus(int status) {
         this.status = status;
     }
+
+    public boolean isSuccessful() {
+        return status == 201; // Code Created
+    }
 }

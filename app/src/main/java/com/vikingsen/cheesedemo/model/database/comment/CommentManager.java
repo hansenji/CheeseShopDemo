@@ -11,6 +11,7 @@ package com.vikingsen.cheesedemo.model.database.comment;
 
 import com.vikingsen.cheesedemo.model.database.DatabaseManager;
 
+import org.dbtools.android.domain.database.contentvalues.DBToolsContentValues;
 import org.dbtools.android.domain.date.DBToolsThreeTenFormatter;
 import org.dbtools.query.sql.SQLQueryBuilder;
 import org.threeten.bp.LocalDateTime;
@@ -52,5 +53,16 @@ public class CommentManager extends CommentBaseManager {
 
     public long findCheeseId(long id) {
         return findValueBySelection(Long.class, CommentConst.C_CHEESE_ID, id, -1L);
+    }
+
+    public Observable<List<Comment>> findAllNotSyncedRx() {
+        return findAllBySelectionRx(CommentConst.C_SYNCED + "=0", null, null);
+    }
+
+    public void setCommentSynced(String guid, LocalDateTime cached) {
+        DBToolsContentValues contentValues = createNewDBToolsContentValues();
+        contentValues.put(CommentConst.C_SYNCED, true);
+        contentValues.put(CommentConst.C_CACHED, DBToolsThreeTenFormatter.localDateTimeToDBString(cached));
+        update(contentValues, CommentConst.C_GUID + "=?", SQLQueryBuilder.toSelectionArgs(guid));
     }
 }

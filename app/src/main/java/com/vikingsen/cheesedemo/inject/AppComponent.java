@@ -1,5 +1,6 @@
 package com.vikingsen.cheesedemo.inject;
 
+import com.vikingsen.cheesedemo.App;
 import com.vikingsen.cheesedemo.model.webservice.WebServiceModule;
 import com.vikingsen.cheesedemo.ux.cheesedetail.CheeseDetailComponent;
 import com.vikingsen.cheesedemo.ux.cheesedetail.CheeseDetailModule;
@@ -15,4 +16,6 @@ import dagger.Component;
 public interface AppComponent {
     CheeseListComponent include(CheeseListModule module);
     CheeseDetailComponent include(CheeseDetailModule cheeseDetailModule);
+
+    void inject(App target);
 }
