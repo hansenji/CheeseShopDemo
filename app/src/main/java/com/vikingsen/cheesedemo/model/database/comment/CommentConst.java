@@ -97,8 +97,8 @@ public class CommentConst {
         return cursor.getString(cursor.getColumnIndexOrThrow(C_COMMENT));
     }
 
-    public static org.threeten.bp.LocalDate getCreated(Cursor cursor) {
-        return org.dbtools.android.domain.date.DBToolsThreeTenFormatter.dbStringToLocalDate(cursor.getString(cursor.getColumnIndexOrThrow(C_CREATED)));
+    public static org.threeten.bp.LocalDateTime getCreated(Cursor cursor) {
+        return org.dbtools.android.domain.date.DBToolsThreeTenFormatter.dbStringToLocalDateTime(cursor.getString(cursor.getColumnIndexOrThrow(C_CREATED)));
     }
 
     public static boolean isSynced(Cursor cursor) {

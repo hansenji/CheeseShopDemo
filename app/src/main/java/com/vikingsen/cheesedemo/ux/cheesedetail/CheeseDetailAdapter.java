@@ -16,7 +16,7 @@ import com.vikingsen.cheesedemo.model.data.price.Price;
 import com.vikingsen.cheesedemo.model.database.cheese.Cheese;
 import com.vikingsen.cheesedemo.model.database.comment.Comment;
 
-import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.FormatStyle;
 
@@ -190,8 +190,7 @@ class CheeseDetailAdapter extends RecyclerHeaderAdapter<CheeseDetailAdapter.Head
     }
 
     private String getDateText(Comment comment) {
-        LocalDate date;
-        date = comment.getCreated();
+        LocalDateTime date = comment.getCreated();
         return date.format(FORMATTER);
     }
 

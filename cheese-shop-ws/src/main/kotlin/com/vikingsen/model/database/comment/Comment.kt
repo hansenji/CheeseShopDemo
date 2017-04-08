@@ -1,6 +1,6 @@
 package com.vikingsen.model.database.comment
 
-import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
@@ -17,5 +17,5 @@ data class Comment(
         var user: String = "",
         @Column(length = 2048)
         var comment: String = "",
-        var created: LocalDate = LocalDate.of(1980, 1, 1)
+        var created: LocalDateTime = LocalDateTime.of(1980, 1, 1, 0, 0, 0)
 )

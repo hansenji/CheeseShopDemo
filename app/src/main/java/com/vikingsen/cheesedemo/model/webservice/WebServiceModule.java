@@ -7,10 +7,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.vikingsen.cheesedemo.BuildConfig;
 import com.vikingsen.cheesedemo.model.prefs.Prefs;
-import com.vikingsen.cheesedemo.model.webservice.converter.LocalDateDeserializer;
-import com.vikingsen.cheesedemo.model.webservice.converter.LocalDateSerializer;
+import com.vikingsen.cheesedemo.model.webservice.converter.LocalDateTimeDeserializer;
+import com.vikingsen.cheesedemo.model.webservice.converter.LocalDateTimeSerializer;
 
-import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalDateTime;
 
 import javax.inject.Singleton;
 
@@ -54,8 +54,8 @@ public class WebServiceModule {
     @Singleton
     ObjectMapper provideObjectMapper() {
         SimpleModule module = new SimpleModule();
-        module.addSerializer(new LocalDateSerializer());
-        module.addDeserializer(LocalDate.class, new LocalDateDeserializer());
+        module.addSerializer(new LocalDateTimeSerializer());
+        module.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer());
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(module);

@@ -2,7 +2,7 @@ package com.vikingsen
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
 import com.thedeanda.lorem.LoremIpsum
 import com.vikingsen.model.database.cheese.Cheese
 import com.vikingsen.model.database.cheese.CheeseRepository
@@ -16,7 +16,7 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
-import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Random
 import java.util.UUID
@@ -51,7 +51,7 @@ class CheeseDemoWsApplication {
     fun objectMapperBuilder(): Jackson2ObjectMapperBuilder {
         val builder = Jackson2ObjectMapperBuilder()
         builder.serializationInclusion(JsonInclude.Include.NON_NULL)
-        builder.serializers(LocalDateSerializer(DateTimeFormatter.ISO_DATE))
+        builder.serializers(LocalDateTimeSerializer(DateTimeFormatter.ISO_DATE_TIME))
         return builder
     }
 
@@ -64,10 +64,13 @@ class CheeseDemoWsApplication {
                 created = created)
     }
 
-    private fun getDate(index: Int): LocalDate {
-        return LocalDate.now()
-                .minusWeeks(random.nextInt(index).toLong())
-                .minusDays(random.nextInt(index * 2).toLong())
+    private fun getDate(index: Int): LocalDateTime {
+        val i = index + 1
+        return LocalDateTime.now()
+                .minusWeeks(random.nextInt(i).toLong())
+                .minusDays(random.nextInt(i * 2).toLong())
+                .minusHours(random.nextInt(i * 4).toLong())
+                .minusMinutes(random.nextInt(i * 8).toLong())
     }
 
     private fun getUser(index: Int): String {

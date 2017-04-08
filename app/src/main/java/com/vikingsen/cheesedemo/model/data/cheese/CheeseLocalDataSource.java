@@ -72,6 +72,9 @@ class CheeseLocalDataSource {
         cheeseManager.beginTransaction();
         boolean commit = false;
         try {
+            if (!cheeses.isEmpty()) {
+                cheeseManager.deleteAll();
+            }
             for (CheeseDto dto : cheeseDtos) {
                 Cheese cheese = new Cheese();
                 cheese.setId(dto.getId());

@@ -7,7 +7,6 @@ import com.vikingsen.cheesedemo.model.webservice.dto.CommentDto;
 import com.vikingsen.cheesedemo.model.webservice.dto.CommentResponse;
 import com.vikingsen.cheesedemo.util.SchedulerProvider;
 
-import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.temporal.ChronoUnit;
 import org.threeten.bp.temporal.TemporalUnit;
@@ -86,7 +85,7 @@ class CommentLocalDataSource {
                 comment.setCheeseId(cheeseId);
                 comment.setUser(user);
                 comment.setComment(text);
-                comment.setCreated(LocalDate.now());
+                comment.setCreated(LocalDateTime.now());
                 emitter.onSuccess(commentManager.save(comment));
             } catch (Exception e) {
                 emitter.onError(e);

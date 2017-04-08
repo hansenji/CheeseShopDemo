@@ -26,7 +26,7 @@
             <field name="cheese_id" jdbcDataType="BIGINT" foreignKeyTable="cheese" foreignKeyField="id"/> <!-- Non Enforcing Foreign Key constraint -->
             <field name="user" jdbcDataType="VARCHAR"/>
             <field name="comment" jdbcDataType="VARCHAR"/>
-            <field name="created" jdbcDataType="DATE"/>
+            <field name="created" jdbcDataType="DATETIME"/>
             <field name="synced" jdbcDataType="BOOLEAN" defaultValue="false"/>
             <field name="cached" jdbcDataType="DATETIME" notNull="false"/>
         </table>

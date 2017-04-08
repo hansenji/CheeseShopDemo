@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 @RestController
 @RequestMapping("/api/v1/comment")
@@ -49,7 +49,7 @@ class CommentController(val commentRepository: CommentRepository,
             this.cheeseId = request.cheeseId
             this.user = request.user
             this.comment = request.comment
-            this.created = LocalDate.now()
+            this.created = LocalDateTime.now()
         })
         return CommentResponse(request.guid, HttpStatus.CREATED.value())
     }

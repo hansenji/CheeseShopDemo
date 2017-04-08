@@ -2,7 +2,7 @@ package com.vikingsen.cheesedemo.model.webservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CommentDto {
@@ -10,7 +10,7 @@ public class CommentDto {
     private long cheeseId;
     private String user;
     private String comment;
-    private LocalDate created;
+    private LocalDateTime created;
 
     public String getGuid() {
         return guid;
@@ -44,11 +44,11 @@ public class CommentDto {
         this.comment = comment;
     }
 
-    public LocalDate getCreated() {
+    public LocalDateTime getCreated() {
         return created;
     }
 
-    public void setCreated(LocalDate created) {
+    public void setCreated(LocalDateTime created) {
         this.created = created;
     }
 }
