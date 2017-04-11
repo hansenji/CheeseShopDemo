@@ -31,14 +31,14 @@ class PriceController(val priceRepository: PriceRepository) {
         return priceRepository.findByCheeseId(cheeseId).orElseThrow { PriceNotFoundException() }
     }
 
-    @PostMapping()
+    @GetMapping("/updateAll")
     fun updatePrices(): ResponseEntity<Any> {
         priceRepository.findAll().forEach { price ->
             price.price += genPriceDelta(price.price)
             price.price = Math.round(price.price * 100.0) / 100.0
             priceRepository.save(price)
         }
-        return ResponseEntity.ok().build()
+        return ResponseEntity.ok("Prices Updated")
     }
 
     @ExceptionHandler(Throwable::class)
