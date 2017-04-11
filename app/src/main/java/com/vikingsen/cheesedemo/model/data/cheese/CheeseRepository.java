@@ -69,7 +69,12 @@ public class CheeseRepository {
 
     private Single<List<Cheese>> concatSources(Single<List<Cheese>> source1, Single<List<Cheese>> source2) {
         return Single.concat(source1, source2)
+
+                // If the source1 returns an empty list use the source2
                 .filter(list -> !list.isEmpty())
+
+                // Only take the first list and don't execute any other observables
+                // or return an empty list if both sources fail
                 .first(Collections.emptyList());
     }
 

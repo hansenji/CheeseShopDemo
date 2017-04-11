@@ -22,6 +22,7 @@ public class PriceRepository {
         return Single.just(new Pair<>(cheeseId, forceRefresh))
                 .flatMap(pair -> {
 
+                    // Fake Network time
                     try {
                         TimeUnit.SECONDS.sleep(2);
                     } catch (Exception ignore) {
@@ -29,7 +30,10 @@ public class PriceRepository {
                     }
 
                     long id = pair.getFirst();
-                    return remoteDataSource.getPrice(id).map(priceDto -> new Price(priceDto.getCheeseId(), priceDto.getPrice()));
+
+                    // Only pull from the network no caching
+                    return remoteDataSource.getPrice(id)
+                            .map(priceDto -> new Price(priceDto.getCheeseId(), priceDto.getPrice()));
                 });
     }
 }

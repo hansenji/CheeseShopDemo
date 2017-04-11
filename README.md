@@ -34,5 +34,8 @@ update the [app/build.gradle](app/build.gradle) and change the following fields 
   Libraries this demo is built around:
   * [Dagger 2](https://google.github.io/dagger/)
   * [RxJava 2](https://github.com/ReactiveX/RxJava)
+  * [Retrofit](http://square.github.io/retrofit/)
+  * [Jackson-Databind](https://github.com/FasterXML/jackson-databind)
   * [DBTools](https://github.com/jeffdcamp/dbtools-android)
+  * [Android Job](https://github.com/evernote/android-job)
   * Additional libraries (see [app/build.gradle](app/build.gradle))
