@@ -26,6 +26,7 @@ import java.util.UUID
 class CheeseDemoWsApplication {
 
     private val random = Random(42)
+    private val bytes = ByteArray(42)
     private val lorem = LoremIpsum(42)
     private val name: String by lazy { lorem.firstName }
 
@@ -57,7 +58,7 @@ class CheeseDemoWsApplication {
 
     private fun genComment(cheese: Cheese, index: Int): Comment {
         val created = getDate(index)
-        return Comment(guid = UUID.randomUUID().toString(),
+        return Comment(guid = nextGuid(),
                 cheeseId = cheese.id,
                 user = getUser(index),
                 comment = lorem.getParagraphs(1, 2),
@@ -88,6 +89,11 @@ class CheeseDemoWsApplication {
         val dollars = random.nextInt(25)
         val cents = random.nextInt(100)
         return "$dollars.$cents".toDouble()
+    }
+
+    private fun nextGuid(): String {
+        random.nextBytes(bytes)
+        return UUID.nameUUIDFromBytes(bytes).toString()
     }
 }
 
