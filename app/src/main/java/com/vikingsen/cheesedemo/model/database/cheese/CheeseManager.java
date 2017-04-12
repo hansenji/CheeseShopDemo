@@ -16,7 +16,8 @@ import org.threeten.bp.LocalDateTime;
 
 import java.util.List;
 
-import rx.Observable;
+import io.reactivex.Maybe;
+import io.reactivex.Single;
 
 
 @javax.inject.Singleton
@@ -29,8 +30,8 @@ public class CheeseManager extends CheeseBaseManager {
         super(databaseManager);
     }
 
-    public Cheese findByCheeseId(long cheeseId) {
-        return findBySelection(CheeseConst.C_ID + "=?", SQLQueryBuilder.toSelectionArgs(cheeseId), null);
+    public Maybe<Cheese> findByCheeseIdRx(long cheeseId) {
+        return findBySelectionRx(CheeseConst.C_ID + "=?", SQLQueryBuilder.toSelectionArgs(cheeseId), null);
     }
 
     public LocalDateTime findOldestCacheDate() {
@@ -53,8 +54,7 @@ public class CheeseManager extends CheeseBaseManager {
         return cached;
     }
 
-    public Observable<List<Cheese>> findAllCheesesRx() {
-
+    public Single<List<Cheese>> findAllCheesesRx() {
         // GOTCHA - MATCH ORDERING FROM SERVER
         return findAllOrderByRx(CheeseConst.C_NAME);
     }

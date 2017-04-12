@@ -18,7 +18,7 @@ import org.threeten.bp.LocalDateTime;
 
 import java.util.List;
 
-import rx.Observable;
+import io.reactivex.Single;
 
 
 @javax.inject.Singleton
@@ -31,7 +31,7 @@ public class CommentManager extends CommentBaseManager {
         super(databaseManager);
     }
 
-    public Observable<List<Comment>> findAllForCheeseIdRx(long cheeseId) {
+    public Single<List<Comment>> findAllForCheeseIdRx(long cheeseId) {
         return findAllBySelectionRx(CommentConst.C_CHEESE_ID + "=?", SQLQueryBuilder.toSelectionArgs(cheeseId),
                 CommentConst.C_CREATED + " DESC");
     }
@@ -52,10 +52,10 @@ public class CommentManager extends CommentBaseManager {
     }
 
     public long findCheeseId(long id) {
-        return findValueBySelection(Long.class, CommentConst.C_CHEESE_ID, id, -1L);
+        return findValueByRowId(long.class, CommentConst.C_CHEESE_ID, id, -1L);
     }
 
-    public Observable<List<Comment>> findAllNotSyncedRx() {
+    public Single<List<Comment>> findAllNotSyncedRx() {
         return findAllBySelectionRx(CommentConst.C_SYNCED + "=0", null, null);
     }
 

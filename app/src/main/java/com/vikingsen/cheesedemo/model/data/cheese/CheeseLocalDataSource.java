@@ -12,13 +12,11 @@ import org.threeten.bp.temporal.ChronoUnit;
 import org.threeten.bp.temporal.TemporalUnit;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 
@@ -36,22 +34,11 @@ class CheeseLocalDataSource {
     }
 
     Single<List<Cheese>> getCheeses() {
-        return RxJavaInterop.toV2Observable(cheeseManager.findAllCheesesRx()).single(Collections.emptyList());
+        return cheeseManager.findAllCheesesRx();
     }
 
     Maybe<Cheese> getCheese(Long cheeseId) {
-        return Maybe.create(emitter -> {
-            try {
-                Cheese cheese = cheeseManager.findByCheeseId(cheeseId);
-                if (cheese != null) {
-                    emitter.onSuccess(cheese);
-                } else {
-                    emitter.onComplete();
-                }
-            } catch (Exception e) {
-                emitter.onError(e);
-            }
-        });
+        return cheeseManager.findByCheeseIdRx(cheeseId);
     }
 
     boolean isCheeseStale() {

@@ -11,14 +11,12 @@ import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.temporal.ChronoUnit;
 import org.threeten.bp.temporal.TemporalUnit;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import timber.log.Timber;
@@ -42,8 +40,7 @@ class CommentLocalDataSource {
     }
 
     Single<List<Comment>> getComments(long cheeseId) {
-        return RxJavaInterop.toV2Observable(commentManager.findAllForCheeseIdRx(cheeseId))
-                .single(Collections.emptyList());
+        return commentManager.findAllForCheeseIdRx(cheeseId);
     }
 
     boolean areCommentsStale(long cheeseId) {
@@ -100,7 +97,7 @@ class CommentLocalDataSource {
     }
 
     Single<List<Comment>> getNotSyncedComments() {
-        return RxJavaInterop.toV2Observable(commentManager.findAllNotSyncedRx()).single(Collections.emptyList());
+        return commentManager.findAllNotSyncedRx();
     }
 
     boolean saveSyncResponses(List<CommentResponse> responses) {
@@ -126,7 +123,7 @@ class CommentLocalDataSource {
      * Auto subscribes on computation scheduler
      */
     Observable<CommentChange> modelChanges() {
-        return RxJavaInterop.toV2Observable(commentManager.tableChanges()).map(tableChange -> {
+        return commentManager.tableChanges().map(tableChange -> {
             if (tableChange.isBulkOperation()) {
                 return CommentChange.bulkOperation();
             }

@@ -2,7 +2,7 @@
 
 buildscript {
     ext.kotlinVersion = '1.1.1'
-    ext.dbtoolsVersion = '8.2.1'
+    ext.dbtoolsVersion = '9.0.0'
 
     repositories {
         mavenCentral()
