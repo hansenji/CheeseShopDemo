@@ -1,6 +1,5 @@
 package com.vikingsen.cheesedemo.model.data.comment;
 
-import com.vikingsen.cheesedemo.job.AppJobScheduler;
 import com.vikingsen.cheesedemo.model.database.comment.Comment;
 import com.vikingsen.cheesedemo.model.database.comment.CommentManager;
 import com.vikingsen.cheesedemo.model.webservice.dto.CommentDto;
@@ -17,6 +16,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import timber.log.Timber;
@@ -29,14 +29,11 @@ class CommentLocalDataSource {
 
     private final CommentManager commentManager;
     private final SchedulerProvider schedulerProvider;
-    private final AppJobScheduler appJobScheduler;
 
     @Inject
-    CommentLocalDataSource(CommentManager commentManager, SchedulerProvider schedulerProvider,
-                           AppJobScheduler appJobScheduler) {
+    CommentLocalDataSource(CommentManager commentManager, SchedulerProvider schedulerProvider) {
         this.commentManager = commentManager;
         this.schedulerProvider = schedulerProvider;
-        this.appJobScheduler = appJobScheduler;
     }
 
     Single<List<Comment>> getComments(long cheeseId) {
@@ -74,8 +71,8 @@ class CommentLocalDataSource {
         return commit;
     }
 
-    void saveNewComment(long cheeseId, String user, String text) {
-        Single.<Boolean>create(emitter -> {
+    Completable saveNewComment(long cheeseId, String user, String text) {
+        return Completable.create(emitter -> {
             try {
                 Comment comment = new Comment();
                 comment.setGuid(UUID.randomUUID().toString());
@@ -83,16 +80,15 @@ class CommentLocalDataSource {
                 comment.setUser(user);
                 comment.setComment(text);
                 comment.setCreated(LocalDateTime.now());
-                emitter.onSuccess(commentManager.save(comment));
+                if (commentManager.save(comment)) {
+                    emitter.onComplete();
+                } else {
+                    emitter.onError(new Exception("Failed to save comment " + comment.getGuid()));
+                }
             } catch (Exception e) {
                 emitter.onError(e);
             }
-        }).subscribeOn(schedulerProvider.computation())
-                .subscribe(saved -> {
-                    if (saved) {
-                        appJobScheduler.scheduleCommentSync();
-                    }
-                });
+        }).subscribeOn(schedulerProvider.computation());
 
     }
 

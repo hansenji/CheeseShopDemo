@@ -3,10 +3,10 @@ package com.vikingsen.cheesedemo.model.data.comment;
 
 import android.support.annotation.WorkerThread;
 
+import com.vikingsen.cheesedemo.job.AppJobScheduler;
 import com.vikingsen.cheesedemo.model.database.comment.Comment;
 import com.vikingsen.cheesedemo.model.webservice.dto.CommentRequestDto;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -22,11 +22,13 @@ public class CommentRepository {
 
     private final CommentRemoteDataSource remoteDataSource;
     private final CommentLocalDataSource localDataSource;
+    private final AppJobScheduler appJobScheduler;
 
     @Inject
-    CommentRepository(CommentRemoteDataSource remoteDataSource, CommentLocalDataSource localDataSource) {
+    CommentRepository(CommentRemoteDataSource remoteDataSource, CommentLocalDataSource localDataSource, AppJobScheduler appJobScheduler) {
         this.remoteDataSource = remoteDataSource;
         this.localDataSource = localDataSource;
+        this.appJobScheduler = appJobScheduler;
     }
 
     public Single<List<Comment>> getComments(long cheeseId, boolean forceRefresh) {
@@ -34,23 +36,30 @@ public class CommentRepository {
                 .flatMap(pair -> {
                     long id = pair.getFirst();
                     boolean force = pair.getSecond();
+
+                    Single<List<Comment>> localComments = localDataSource.getComments(id);
+
                     if (force || localDataSource.areCommentsStale(id)) {
                         Timber.d("COMMENTS ARE STALE");
                         return getAndSaveRemoteComments(id)
 
                                 // Always load from the database to display not yet synced comments
                                 // We will be notified through modelChanges to load from the database
-                                .map(success -> Collections.emptyList());
+                                .flatMap(success -> localComments);
 
                     } else {
                         Timber.d("COMMENTS ARE FRESH");
-                        return localDataSource.getComments(id);
+                        return localComments;
                     }
                 });
     }
 
     public void addComment(long cheeseId, String user, String comment) {
-        localDataSource.saveNewComment(cheeseId, user, comment);
+        localDataSource.saveNewComment(cheeseId, user, comment)
+                .subscribe(
+                        () -> appJobScheduler.scheduleCommentSync(),
+                        e -> Timber.e(e, "Failed to save comment")
+                );
     }
 
     @WorkerThread
