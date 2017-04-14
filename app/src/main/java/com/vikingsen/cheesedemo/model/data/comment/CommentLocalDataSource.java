@@ -50,6 +50,7 @@ class CommentLocalDataSource {
         LocalDateTime cached = LocalDateTime.now();
         boolean commit = false;
         try {
+            // TODO delete comments that are no longer valid(on the server)
             for (CommentDto dto : commentDtos) {
                 Comment comment = commentManager.findByGuid(dto.getGuid());
                 if (comment == null) {
