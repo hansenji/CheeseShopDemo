@@ -16,6 +16,9 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'dbtools'
 apply plugin: 'me.tatarka.retrolambda'
 
@@ -94,6 +97,15 @@ android {
             buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
         }
     }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 ext {
@@ -123,15 +135,15 @@ dependencies {
 
     // Dagger
     compile 'com.google.dagger:dagger:2.10'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.10'
+    kapt 'com.google.dagger:dagger-compiler:2.10'
 
 //    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     // UI
     compile "com.vikingsen:pocketknife-core:${pocketKnifeVersion}"
-    annotationProcessor "com.vikingsen:pocketknife-compiler:${pocketKnifeVersion}"
+    kapt "com.vikingsen:pocketknife-compiler:${pocketKnifeVersion}"
     compile "com.jakewharton:butterknife:$butterKnifeVersion"
-    annotationProcessor "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
+    kapt "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
     compile "com.afollestad.material-dialogs:commons:$materialDialogs"
 
     // Code
@@ -144,6 +156,7 @@ dependencies {
     // Network
     compile 'com.squareup.retrofit2:converter-jackson:2.2.0'
     compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion"
     compile "com.squareup.okhttp3:okhttp:$okhttpVersion"
     compile "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
     compile 'com.github.bumptech.glide:glide:3.7.0'
@@ -153,9 +166,9 @@ dependencies {
 
     // RxJava 2
     compile 'io.reactivex.rxjava2:rxjava:2.0.8'
-//    compile 'io.reactivex.rxjava2:rxkotlin:2.0.0'
+    compile 'io.reactivex.rxjava2:rxkotlin:2.0.0'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-//    compile 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.0.0'
+    compile 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.0.0'
     // Todo Remove when DBTools migrates to RxJava2
     compile 'com.github.akarnokd:rxjava2-interop:0.9.5'
 
@@ -168,10 +181,10 @@ dependencies {
 }
 
 dbtools {
-    type 'ANDROID'
+    type 'ANDROID-KOTLIN'
 
     basePackageName 'com.vikingsen.cheesedemo.model.database'
-    outputSrcDir 'src/main/java/com/vikingsen/cheesedemo/model/database'
+    outputSrcDir 'src/main/kotlin/com/vikingsen/cheesedemo/model/database'
 
     injectionSupport true
     jsr305Support true

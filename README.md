@@ -2,6 +2,7 @@ Cheese Shop (Android Demo Application)
 ======================================
 
 This project shows examples of the MVP architecture with the Repository Model pattern.
+It is written in Kotlin. For a Java version of the application check the [Java Version](https://github.com/hansenji/CheeseShopDemo/tree/JAVA) release.
 
 Webservice
 ----------
