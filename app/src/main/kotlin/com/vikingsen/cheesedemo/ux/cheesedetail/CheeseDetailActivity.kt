@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
-import butterknife.ButterKnife
 import com.bumptech.glide.Glide
 import com.vikingsen.cheesedemo.BuildConfig
 import com.vikingsen.cheesedemo.R
@@ -44,7 +43,6 @@ class CheeseDetailActivity : AppCompatActivity(), CheeseDetailContract.View, Add
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cheese_detail)
-        ButterKnife.bind(this)
         PocketKnife.bindExtras(this)
         presenter.init(cheeseId)
 

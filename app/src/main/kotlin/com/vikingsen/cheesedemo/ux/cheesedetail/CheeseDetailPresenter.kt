@@ -103,7 +103,7 @@ class CheeseDetailPresenter
 
     private fun loadPrice(forceRefresh: Boolean) {
         if (cheeseId == -1L) {
-            throw IllegalStateException("You must call init before calling loadCheese()")
+            throw UninitializedPropertyAccessException("You must call init before calling loadCheese()")
         }
         priceDisposable?.let {
             it.dispose()

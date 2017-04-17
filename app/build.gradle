@@ -142,8 +142,6 @@ dependencies {
     // UI
     compile "com.vikingsen:pocketknife-core:${pocketKnifeVersion}"
     kapt "com.vikingsen:pocketknife-compiler:${pocketKnifeVersion}"
-    compile "com.jakewharton:butterknife:$butterKnifeVersion"
-    kapt "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
     compile "com.afollestad.material-dialogs:commons:$materialDialogs"
 
     // Code

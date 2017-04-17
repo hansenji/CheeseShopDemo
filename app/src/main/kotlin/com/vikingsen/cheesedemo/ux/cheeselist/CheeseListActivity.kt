@@ -3,7 +3,6 @@ package com.vikingsen.cheesedemo.ux.cheeselist
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
-import butterknife.ButterKnife
 import com.bumptech.glide.Glide
 import com.devbrackets.android.recyclerext.layoutmanager.AutoColumnGridLayoutManager
 import com.vikingsen.cheesedemo.R
@@ -33,7 +32,6 @@ class CheeseListActivity : AppCompatActivity(), CheeseListContract.View {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_cheese_list)
-        ButterKnife.bind(this)
 
         setSupportActionBar(clToolbar)
         setTitle(R.string.cheese_shop)
