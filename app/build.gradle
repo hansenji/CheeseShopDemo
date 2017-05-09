@@ -6,13 +6,6 @@ buildscript {
         jcenter()
         mavenLocal()
     }
-
-    dependencies {
-        classpath 'me.tatarka:gradle-retrolambda:3.6.0'
-        classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2' // work-around for retrolambda and lint issues (remove when retrolambda is
-    }
-    // Exclude the version that the android plugin depends on.
-    configurations.classpath.exclude group: 'com.android.tools.external.lombok'
 }
 
 apply plugin: 'com.android.application'
@@ -20,9 +13,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'dbtools'
-apply plugin: 'me.tatarka.retrolambda'
 
-def artOnly = false; // enable a fast build supported ONLY by Android 5.0+
+def artOnly = false // enable a fast build supported ONLY by Android 5.0+
 def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
 
 def dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
@@ -71,8 +63,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
 
     packagingOptions {
@@ -116,7 +108,7 @@ ext {
     pocketKnifeVersion = '3.2.1'
     pocketBusVersion = '1.2.0'
     jacksonVersion = '2.8.7'
-    materialDialogs = '0.9.4.2'
+    materialDialogs = '0.9.4.4'
     butterKnifeVersion = '8.5.1'
 }
 
@@ -132,6 +124,7 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
 
     // Dagger
     compile 'com.google.dagger:dagger:2.10'
@@ -171,9 +164,6 @@ dependencies {
     compile 'com.github.akarnokd:rxjava2-interop:0.9.5'
 
     compile 'net.zetetic:android-database-sqlcipher:3.5.7'
-
-    // Retrolambda
-    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.5.1'
 
     testCompile 'junit:junit:4.12'
 }
