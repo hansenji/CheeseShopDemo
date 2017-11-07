@@ -1,13 +1,5 @@
 import java.text.SimpleDateFormat
 
-buildscript {
-    repositories {
-        mavenCentral()
-        jcenter()
-        mavenLocal()
-    }
-}
-
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
@@ -30,12 +22,12 @@ def versionMajorMinorPatchBuild = "${versionMajor}.${versionMinor}.${versionPatc
 
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 27
+    buildToolsVersion '27.0.0'
     defaultConfig {
         applicationId "com.vikingsen.cheesedemo"
         minSdkVersion 19
-        targetSdkVersion 25
+        targetSdkVersion 27
 
         if (artOnly) {
             minSdkVersion 21 // temp enable to perform faster builds
@@ -54,6 +46,12 @@ android {
         buildConfigField "String", "SERVICE_BASE_URL", "\"http://10.0.2.2:8080/\""
         buildConfigField "String", "IMAGE_BASE_URL", "\"http://10.0.2.2:8080\""
         buildConfigField "String", "USER_NAME", "\"Monterey Jack\""
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
 
     lintOptions {
@@ -63,8 +61,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     packagingOptions {
@@ -75,6 +73,7 @@ android {
         exclude 'META-INF/services/javax.annotation.processing.Processor'
         exclude 'LICENSE.txt'
         exclude 'META-INF/rxjava.properties'
+        exclude 'META-INF/MANIFEST.MF'
     }
 
     buildTypes {
@@ -85,14 +84,9 @@ android {
             buildConfigField "String", "GIT_SHA", "\"DEBUG\""
         }
         release {
-            buildConfigField "long", "BUILD_TIME", "\"${buildTime}\""
+            buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
             buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
         }
-    }
-
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-        test.java.srcDirs += 'src/test/kotlin'
     }
 
     testOptions {
@@ -100,79 +94,85 @@ android {
     }
 }
 
-ext {
-    // versions for libraries that multiple dependencies
-    supportLibVersion = '25.3.1'
-    daggerVersion = '2.10'
-    okhttpVersion = '3.6.0'
-    pocketKnifeVersion = '3.2.1'
-    pocketBusVersion = '1.2.0'
-    jacksonVersion = '2.8.7'
-    materialDialogs = '0.9.4.4'
-    butterKnifeVersion = '8.5.1'
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
+}
+
+kapt {
+    correctErrorTypes = true
 }
 
 dependencies {
-    compile "com.android.support:appcompat-v7:${supportLibVersion}"
-    compile "com.android.support:support-v13:${supportLibVersion}"
-    compile "com.android.support:recyclerview-v7:${supportLibVersion}"
-    compile "com.android.support:cardview-v7:${supportLibVersion}"
-    compile "com.android.support:design:${supportLibVersion}"
-    compile "com.android.support:support-annotations:${supportLibVersion}"
-    compile "com.android.support:animated-vector-drawable:${supportLibVersion}"
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:multidex:1.0.1'
+    implementation "com.android.support:appcompat-v7:${supportLibVersion}"
+    implementation "com.android.support:support-v13:${supportLibVersion}"
+    implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
+    implementation "com.android.support:cardview-v7:${supportLibVersion}"
+    implementation "com.android.support:design:${supportLibVersion}"
+    implementation "com.android.support:support-annotations:${supportLibVersion}"
+    implementation "com.android.support:animated-vector-drawable:${supportLibVersion}"
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support:multidex:1.0.2'
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.19.3"
+
+    implementation "android.arch.lifecycle:runtime:1.0.3"
+    implementation "android.arch.lifecycle:extensions:$lifecycleVersion"
+    kapt "android.arch.lifecycle:compiler:$lifecycleVersion"
+    implementation "android.arch.persistence.room:runtime:$lifecycleVersion"
+    kapt "android.arch.persistence.room:compiler:$lifecycleVersion"
+
+    implementation 'me.eugeniomarletti:android-extras-delegates:1.0.5'
 
     // Dagger
-    compile 'com.google.dagger:dagger:2.10'
-    kapt 'com.google.dagger:dagger-compiler:2.10'
-
-//    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "com.google.dagger:dagger:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
     // UI
-    compile "com.vikingsen:pocketknife-core:${pocketKnifeVersion}"
+    implementation "com.vikingsen:pocketknife-core:${pocketKnifeVersion}"
     kapt "com.vikingsen:pocketknife-compiler:${pocketKnifeVersion}"
-    compile "com.afollestad.material-dialogs:commons:$materialDialogs"
+    implementation "com.afollestad.material-dialogs:commons:$materialDialogs"
 
     // Code
-    compile 'com.jakewharton.threetenabp:threetenabp:1.0.5'
-    compile "org.dbtools:dbtools-android:$dbtoolsVersion"
-    compile 'com.devbrackets.android:recyclerext:2.1.1'
-    compile "com.jakewharton.timber:timber:4.5.1"
-    compile 'com.evernote:android-job:1.1.9'
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.0.5'
+    implementation "org.dbtools:dbtools-android:$dbtoolsVersion"
+//    implementation "org.dbtools:dbtools-room:1.0.8"
+//    implementation "org.dbtools:dbtools-room-sqliteorg:1.0.8"
+    implementation 'com.devbrackets.android:recyclerext:2.1.1'
+    implementation "com.jakewharton.timber:timber:4.6.0"
+    implementation 'com.evernote:android-job:1.2.0'
 
     // Network
-    compile 'com.squareup.retrofit2:converter-jackson:2.2.0'
-    compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-    compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion"
-    compile "com.squareup.okhttp3:okhttp:$okhttpVersion"
-    compile "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
-    compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile('com.github.bumptech.glide:okhttp3-integration:1.4.0') {
-        exclude group: 'glide-parent'
-    }
+    implementation 'com.squareup.retrofit2:converter-jackson:2.3.0'
+    implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion"
+    implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
+    implementation "com.github.bumptech.glide:glide:$glideVersion"
+    implementation "com.github.bumptech.glide:okhttp3-integration:$glideVersion"
 
     // RxJava 2
-    compile 'io.reactivex.rxjava2:rxjava:2.0.8'
-    compile 'io.reactivex.rxjava2:rxkotlin:2.0.0'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.0.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.6'
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.1.0'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.0.0'
     // Todo Remove when DBTools migrates to RxJava2
-    compile 'com.github.akarnokd:rxjava2-interop:0.9.5'
+    implementation 'com.github.akarnokd:rxjava2-interop:0.10.9'
 
-    compile 'net.zetetic:android-database-sqlcipher:3.5.7'
+    implementation 'net.zetetic:android-database-sqlcipher:3.5.7'
 
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
+    testImplementation "org.dbtools:dbtools-room-sqliteorg:1.0.8"
 }
 
 dbtools {
     type 'ANDROID-KOTLIN'
 
     basePackageName 'com.vikingsen.cheesedemo.model.database'
-    outputSrcDir 'src/main/kotlin/com/vikingsen/cheesedemo/model/database'
+    outputSrcDir 'src/main/java/com/vikingsen/cheesedemo/model/database'
 
     injectionSupport true
     jsr305Support true
