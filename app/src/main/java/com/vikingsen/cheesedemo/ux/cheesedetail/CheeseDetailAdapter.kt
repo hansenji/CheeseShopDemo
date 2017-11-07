@@ -10,8 +10,8 @@ import android.widget.TextView
 import com.devbrackets.android.recyclerext.adapter.RecyclerHeaderAdapter
 import com.vikingsen.cheesedemo.R
 import com.vikingsen.cheesedemo.model.data.price.Price
-import com.vikingsen.cheesedemo.model.database.cheese.Cheese
-import com.vikingsen.cheesedemo.model.database.comment.Comment
+import com.vikingsen.cheesedemo.model.room.cheese.Cheese
+import com.vikingsen.cheesedemo.model.room.comment.Comment
 import kotlinx.android.synthetic.main.item_comment.view.*
 import kotlinx.android.synthetic.main.item_description.view.*
 import kotlinx.android.synthetic.main.item_header.view.*

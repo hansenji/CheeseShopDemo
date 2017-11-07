@@ -22,7 +22,7 @@
             <field name="id" jdbcDataType="BIGINT" primaryKey="true" increment="true"/>
             <!-- GOTCHA - IF USER CREATABLE CONTENT FIND A KEY YOU CAN GEN THAT MATCHES SERVER-->
             <!-- GOTCHA - GUIDs WORK WELL -->
-            <field name="guid" jdbcDataType="VARCHAR" unique="true" index="true"/>
+            <field name="id" jdbcDataType="VARCHAR" unique="true" index="true"/>
             <field name="cheese_id" jdbcDataType="BIGINT" foreignKeyTable="cheese" foreignKeyField="id"/> <!-- Non Enforcing Foreign Key constraint -->
             <field name="user" jdbcDataType="VARCHAR"/>
             <field name="comment" jdbcDataType="VARCHAR"/>

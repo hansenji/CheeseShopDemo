@@ -1,63 +1,60 @@
 package com.vikingsen.cheesedemo.model.data.cheese
 
 
-import com.vikingsen.cheesedemo.model.database.cheese.Cheese
-import com.vikingsen.cheesedemo.model.database.cheese.CheeseManager
+import com.vikingsen.cheesedemo.model.room.ShopDatabase
+import com.vikingsen.cheesedemo.model.room.cheese.Cheese
+import com.vikingsen.cheesedemo.model.room.cheese.CheeseDao
 import com.vikingsen.cheesedemo.model.webservice.dto.CheeseDto
 import io.reactivex.Maybe
 import io.reactivex.Single
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.temporal.ChronoUnit
-import java.util.ArrayList
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class CheeseLocalDataSource @Inject
-constructor(private val cheeseManager: CheeseManager) {
+class CheeseLocalDataSource
+@Inject constructor(
+        private val shopDatabase: ShopDatabase,
+        private val cheeseDao: CheeseDao
+) {
 
     fun getCheeses(): Single<List<Cheese>> {
-        return cheeseManager.findAllCheesesRx()
+        return cheeseDao.findAllRx()
     }
 
-    fun getCheese(cheeseId: Long?): Maybe<Cheese> {
-        return cheeseManager.findByCheeseIdRx(cheeseId!!)
+    fun getCheese(cheeseId: Long): Maybe<Cheese> {
+        return cheeseDao.findByIdRx(cheeseId)
     }
 
     fun isCheeseStale(): Boolean {
         val cacheExpiration = LocalDateTime.now().minus(CACHE_VALID_AMOUNT, CACHE_VALID_UNIT)
 
         // GOTCHA - DOUBLE CHECK THAT THE CHECK MATCHES THE METHOD NAME (isBefore vs isAfter)
-        return cheeseManager.findOldestCacheDate().isBefore(cacheExpiration)
+        return cheeseDao.findOldestCacheDate()?.isBefore(cacheExpiration) ?: true
     }
 
     fun isCheeseStale(cheeseId: Long): Boolean {
         val cacheExpiration = LocalDateTime.now().minus(CACHE_VALID_AMOUNT, CACHE_VALID_UNIT)
-        return cheeseManager.findCacheDate(cheeseId).isBefore(cacheExpiration)
+        return cheeseDao.findCacheDataById(cheeseId)?.isBefore(cacheExpiration) ?: true
     }
 
     fun saveCheeses(cheeseDtos: List<CheeseDto>): List<Cheese> {
         val cached = LocalDateTime.now()
-        val cheeses = ArrayList<Cheese>(cheeseDtos.size)
-        cheeseManager.beginTransaction()
-        var commit = false
-        try {
-            if (!cheeses.isEmpty()) {
-                cheeseManager.deleteAll()
+        val cheeses = cheeseDtos.map { (id, name, image, description) ->
+            Cheese().apply {
+                this.id = id
+                this.name = name
+                this.description = description
+                this.imageUrl = image
+                this.cached = cached
             }
-            for ((id, name, image, description) in cheeseDtos) {
-                val cheese = Cheese()
-                cheese.id = id
-                cheese.name = name
-                cheese.description = description
-                cheese.imageUrl = image
-                cheese.cached = cached
-                cheeseManager.save(cheese)
-                cheeses.add(cheese)
+        }
+        shopDatabase.runInTransaction {
+            if (cheeses.isNotEmpty()) {
+                cheeseDao.deleteAll()
             }
-            commit = true
-        } finally {
-            cheeseManager.endTransaction(commit)
+            cheeseDao.insertAll(cheeses)
         }
         return cheeses
     }
@@ -69,7 +66,7 @@ constructor(private val cheeseManager: CheeseManager) {
         cheese.description = dto.description
         cheese.imageUrl = dto.image
         cheese.cached = LocalDateTime.now()
-        cheeseManager.save(cheese)
+        cheeseDao.insert(cheese)
         return cheese
     }
 

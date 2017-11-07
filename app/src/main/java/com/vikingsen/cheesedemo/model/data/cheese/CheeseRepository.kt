@@ -1,6 +1,6 @@
 package com.vikingsen.cheesedemo.model.data.cheese
 
-import com.vikingsen.cheesedemo.model.database.cheese.Cheese
+import com.vikingsen.cheesedemo.model.room.cheese.Cheese
 import io.reactivex.Maybe
 import io.reactivex.Single
 import timber.log.Timber

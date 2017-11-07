@@ -3,7 +3,7 @@ package com.vikingsen.cheesedemo.model.data.comment
 
 import android.support.annotation.WorkerThread
 import com.vikingsen.cheesedemo.job.AppJobScheduler
-import com.vikingsen.cheesedemo.model.database.comment.Comment
+import com.vikingsen.cheesedemo.model.room.comment.Comment
 import com.vikingsen.cheesedemo.model.webservice.dto.CommentRequestDto
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -51,7 +51,7 @@ internal constructor(private val remoteDataSource: CommentRemoteDataSource, priv
         return localDataSource.getNotSyncedComments()
                 .toObservable()
                 .flatMapIterable { it }
-                .map { CommentRequestDto(it.guid, it.cheeseId, it.user, it.comment) }
+                .map { CommentRequestDto(it.id, it.cheeseId, it.user, it.comment) }
                 .toList()
                 .flatMapMaybe { remoteDataSource.syncComments(it) }
                 .map { localDataSource.saveSyncResponses(it) }
