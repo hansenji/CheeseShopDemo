@@ -1,5 +1,5 @@
 
-package com.vikingsen.cheesedemo.model.room.cheese
+package com.vikingsen.cheesedemo.model.database.cheese
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey

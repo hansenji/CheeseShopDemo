@@ -11,7 +11,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.devbrackets.android.recyclerext.adapter.viewholder.ClickableViewHolder
 import com.vikingsen.cheesedemo.BuildConfig
 import com.vikingsen.cheesedemo.R
-import com.vikingsen.cheesedemo.model.room.cheese.Cheese
+import com.vikingsen.cheesedemo.model.database.cheese.Cheese
 import kotlinx.android.synthetic.main.item_cheese.view.*
 import java.util.ArrayList
 

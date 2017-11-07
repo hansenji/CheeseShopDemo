@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.preference.PreferenceManager
-import com.vikingsen.cheesedemo.model.room.DatabaseModule
+import com.vikingsen.cheesedemo.model.database.DatabaseModule
 import com.vikingsen.cheesedemo.util.SchedulerProvider
 import com.vikingsen.cheesedemo.util.SchedulerProvider.AppSchedulerProvider
 import dagger.Module

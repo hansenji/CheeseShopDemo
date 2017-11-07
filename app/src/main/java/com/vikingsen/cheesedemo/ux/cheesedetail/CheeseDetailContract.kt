@@ -2,8 +2,8 @@ package com.vikingsen.cheesedemo.ux.cheesedetail
 
 
 import com.vikingsen.cheesedemo.model.data.price.Price
-import com.vikingsen.cheesedemo.model.room.cheese.Cheese
-import com.vikingsen.cheesedemo.model.room.comment.Comment
+import com.vikingsen.cheesedemo.model.database.cheese.Cheese
+import com.vikingsen.cheesedemo.model.database.comment.Comment
 
 interface CheeseDetailContract {
     interface View {

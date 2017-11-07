@@ -8,7 +8,7 @@ import com.devbrackets.android.recyclerext.layoutmanager.AutoColumnGridLayoutMan
 import com.vikingsen.cheesedemo.R
 import com.vikingsen.cheesedemo.inject.Injector
 import com.vikingsen.cheesedemo.intent.InternalIntent
-import com.vikingsen.cheesedemo.model.room.cheese.Cheese
+import com.vikingsen.cheesedemo.model.database.cheese.Cheese
 import kotlinx.android.synthetic.main.activity_cheese_list.*
 import javax.inject.Inject
 

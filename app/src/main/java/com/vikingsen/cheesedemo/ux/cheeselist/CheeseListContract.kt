@@ -1,7 +1,7 @@
 package com.vikingsen.cheesedemo.ux.cheeselist
 
 
-import com.vikingsen.cheesedemo.model.room.cheese.Cheese
+import com.vikingsen.cheesedemo.model.database.cheese.Cheese
 
 interface CheeseListContract {
     interface View {

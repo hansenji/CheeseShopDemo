@@ -1,4 +1,4 @@
-package com.vikingsen.cheesedemo.model.room.comment
+package com.vikingsen.cheesedemo.model.database.comment
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey

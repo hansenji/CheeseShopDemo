@@ -1,4 +1,4 @@
-package com.vikingsen.cheesedemo.model.room
+package com.vikingsen.cheesedemo.model.database
 
 import android.arch.persistence.room.TypeConverter
 import org.threeten.bp.LocalDateTime

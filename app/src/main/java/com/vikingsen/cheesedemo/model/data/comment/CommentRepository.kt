@@ -3,7 +3,7 @@ package com.vikingsen.cheesedemo.model.data.comment
 
 import android.support.annotation.WorkerThread
 import com.vikingsen.cheesedemo.job.AppJobScheduler
-import com.vikingsen.cheesedemo.model.room.comment.Comment
+import com.vikingsen.cheesedemo.model.database.comment.Comment
 import com.vikingsen.cheesedemo.model.webservice.dto.CommentRequestDto
 import io.reactivex.Observable
 import io.reactivex.Single

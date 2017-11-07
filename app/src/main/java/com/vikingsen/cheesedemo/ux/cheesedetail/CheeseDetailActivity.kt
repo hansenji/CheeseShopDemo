@@ -13,8 +13,8 @@ import com.vikingsen.cheesedemo.BuildConfig
 import com.vikingsen.cheesedemo.R
 import com.vikingsen.cheesedemo.inject.Injector
 import com.vikingsen.cheesedemo.model.data.price.Price
-import com.vikingsen.cheesedemo.model.room.cheese.Cheese
-import com.vikingsen.cheesedemo.model.room.comment.Comment
+import com.vikingsen.cheesedemo.model.database.cheese.Cheese
+import com.vikingsen.cheesedemo.model.database.comment.Comment
 import com.vikingsen.cheesedemo.util.DrawableUtil
 import kotlinx.android.synthetic.main.activity_cheese_detail.*
 import pocketknife.BindExtra

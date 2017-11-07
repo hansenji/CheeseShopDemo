@@ -1,9 +1,9 @@
-package com.vikingsen.cheesedemo.model.room
+package com.vikingsen.cheesedemo.model.database
 
 import android.app.Application
 import android.arch.persistence.room.Room
-import com.vikingsen.cheesedemo.model.room.cheese.CheeseDao
-import com.vikingsen.cheesedemo.model.room.comment.CommentDao
+import com.vikingsen.cheesedemo.model.database.cheese.CheeseDao
+import com.vikingsen.cheesedemo.model.database.comment.CommentDao
 import dagger.Module
 import dagger.Provides
 import org.dbtools.android.room.sqliteorg.SqliteOrgSQLiteOpenHelperFactory

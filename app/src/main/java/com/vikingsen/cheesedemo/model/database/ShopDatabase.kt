@@ -1,12 +1,12 @@
-package com.vikingsen.cheesedemo.model.room
+package com.vikingsen.cheesedemo.model.database
 
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
-import com.vikingsen.cheesedemo.model.room.cheese.Cheese
-import com.vikingsen.cheesedemo.model.room.cheese.CheeseDao
-import com.vikingsen.cheesedemo.model.room.comment.Comment
-import com.vikingsen.cheesedemo.model.room.comment.CommentDao
+import com.vikingsen.cheesedemo.model.database.cheese.Cheese
+import com.vikingsen.cheesedemo.model.database.cheese.CheeseDao
+import com.vikingsen.cheesedemo.model.database.comment.Comment
+import com.vikingsen.cheesedemo.model.database.comment.CommentDao
 
 
 @Database(entities = arrayOf(

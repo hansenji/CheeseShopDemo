@@ -1,8 +1,8 @@
 package com.vikingsen.cheesedemo.model.data.comment
 
-import com.vikingsen.cheesedemo.model.room.ShopDatabase
-import com.vikingsen.cheesedemo.model.room.comment.Comment
-import com.vikingsen.cheesedemo.model.room.comment.CommentDao
+import com.vikingsen.cheesedemo.model.database.ShopDatabase
+import com.vikingsen.cheesedemo.model.database.comment.Comment
+import com.vikingsen.cheesedemo.model.database.comment.CommentDao
 import com.vikingsen.cheesedemo.model.webservice.dto.CommentDto
 import com.vikingsen.cheesedemo.model.webservice.dto.CommentResponse
 import com.vikingsen.cheesedemo.util.SchedulerProvider
