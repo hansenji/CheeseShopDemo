@@ -139,8 +139,8 @@ dependencies {
     // Code
     implementation 'com.jakewharton.threetenabp:threetenabp:1.0.5'
     implementation "org.dbtools:dbtools-android:$dbtoolsVersion"
-//    implementation "org.dbtools:dbtools-room:1.0.8"
-//    implementation "org.dbtools:dbtools-room-sqliteorg:1.0.8"
+//    implementation "org.dbtools:dbtools-room:1.1.0"
+//    implementation "org.dbtools:dbtools-room-sqliteorg:1.1.0"
     implementation 'com.devbrackets.android:recyclerext:2.1.1'
     implementation "com.jakewharton.timber:timber:4.6.0"
     implementation 'com.evernote:android-job:1.2.0'
@@ -165,7 +165,7 @@ dependencies {
     implementation 'net.zetetic:android-database-sqlcipher:3.5.7'
 
     testImplementation 'junit:junit:4.12'
-    testImplementation "org.dbtools:dbtools-room-sqliteorg:1.0.8"
+    testImplementation "org.dbtools:dbtools-room-jdbc:1.1.0"
 }
 
 dbtools {
