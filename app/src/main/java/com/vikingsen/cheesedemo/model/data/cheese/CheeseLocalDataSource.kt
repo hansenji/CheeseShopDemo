@@ -1,12 +1,12 @@
 package com.vikingsen.cheesedemo.model.data.cheese
 
 
+import android.arch.lifecycle.LiveData
 import com.vikingsen.cheesedemo.model.database.ShopDatabase
 import com.vikingsen.cheesedemo.model.database.cheese.Cheese
 import com.vikingsen.cheesedemo.model.database.cheese.CheeseDao
 import com.vikingsen.cheesedemo.model.webservice.dto.CheeseDto
 import io.reactivex.Maybe
-import io.reactivex.Single
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.temporal.ChronoUnit
 import javax.inject.Inject
@@ -18,23 +18,15 @@ class CheeseLocalDataSource
         private val shopDatabase: ShopDatabase,
         private val cheeseDao: CheeseDao
 ) {
-
-    fun getCheeses(): Single<List<Cheese>> {
-        return cheeseDao.findAllRx()
+    fun getCheeses(): LiveData<List<Cheese>> {
+        return cheeseDao.findAll()
     }
 
     fun getCheese(cheeseId: Long): Maybe<Cheese> {
         return cheeseDao.findByIdRx(cheeseId)
     }
 
-    fun isCheeseStale(): Boolean {
-        val cacheExpiration = LocalDateTime.now().minus(CACHE_VALID_AMOUNT, CACHE_VALID_UNIT)
-
-        // GOTCHA - DOUBLE CHECK THAT THE CHECK MATCHES THE METHOD NAME (isBefore vs isAfter)
-        return cheeseDao.findOldestCacheDate()?.isBefore(cacheExpiration) ?: true
-    }
-
-    fun isCheeseStale(cheeseId: Long): Boolean {
+    fun areCheeseStale(cheeseId: Long): Boolean {
         val cacheExpiration = LocalDateTime.now().minus(CACHE_VALID_AMOUNT, CACHE_VALID_UNIT)
         return cheeseDao.findCacheDataById(cheeseId)?.isBefore(cacheExpiration) ?: true
     }

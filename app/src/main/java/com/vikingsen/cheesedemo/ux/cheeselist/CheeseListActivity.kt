@@ -1,5 +1,9 @@
 package com.vikingsen.cheesedemo.ux.cheeselist
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -8,24 +12,28 @@ import com.devbrackets.android.recyclerext.layoutmanager.AutoColumnGridLayoutMan
 import com.vikingsen.cheesedemo.R
 import com.vikingsen.cheesedemo.inject.Injector
 import com.vikingsen.cheesedemo.intent.InternalIntent
+import com.vikingsen.cheesedemo.model.Resource
 import com.vikingsen.cheesedemo.model.database.cheese.Cheese
 import kotlinx.android.synthetic.main.activity_cheese_list.*
 import javax.inject.Inject
 
 
-class CheeseListActivity : AppCompatActivity(), CheeseListContract.View {
+class CheeseListActivity : AppCompatActivity() {
 
     @Inject
-    lateinit var presenter: CheeseListPresenter
+    lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject
     lateinit var internalIntent: InternalIntent
 
-    private lateinit var adapter: CheeseListAdapter
+    private val viewModel by lazy { ViewModelProviders.of(this, viewModelFactory).get(CheeseListViewModel::class.java) }
+    private val adapter by lazy {
+        CheeseListAdapter(Glide.with(this)).apply {
+            onClickListener = { startActivity(internalIntent.getCheeseDetailIntent(this@CheeseListActivity, it.id, it.name)) }
+        }
+    }
 
     init {
-        Injector.get()
-                .include(CheeseListModule(this))
-                .inject(this)
+        Injector.get().inject(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,42 +46,19 @@ class CheeseListActivity : AppCompatActivity(), CheeseListContract.View {
 
         setupRecyclerView()
         setupSwipeRefresh()
-    }
 
-    override fun onStart() {
-        super.onStart()
-        presenter.start()
-    }
-
-    override fun onStop() {
-        presenter.stop()
-        super.onStop()
-    }
-
-    override fun showLoading(loading: Boolean) {
-        clSwipeRefreshLayout.isRefreshing = loading
-    }
-
-    override fun showCheeses(cheeses: List<Cheese>) {
-        if (cheeses.isEmpty() && adapter.itemCount > 0) {
-            showError()
-        } else {
-            adapter.cheeses = cheeses
+        viewModel.cheeses.observe {
+            when (it) {
+                is Resource.Loading -> onLoading(it.data)
+                is Resource.Success -> onSuccess(it.data)
+                is Resource.Error -> onError(it.data)
+            }
         }
     }
 
-    override fun showError() {
-        Snackbar.make(clCoordinatorLayout, R.string.failed_to_refresh_cheeses, Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.retry) { presenter.loadCheeses(true) }
-                .show()
-    }
-
     private fun setupRecyclerView() {
-        adapter = CheeseListAdapter(Glide.with(this))
-        adapter.onClickListener = { startActivity(internalIntent.getCheeseDetailIntent(this, it.id, it.name)) }
-
-        val resources = resources
         clRecyclerView.adapter = adapter
+
         val layoutManager = AutoColumnGridLayoutManager(this, resources.getDimensionPixelSize(R.dimen.grid_item_width))
         layoutManager.setMinColumnSpacing(resources.getDimensionPixelSize(R.dimen.grid_space))
         layoutManager.setMatchRowAndColumnSpacing(true)
@@ -83,6 +68,37 @@ class CheeseListActivity : AppCompatActivity(), CheeseListContract.View {
 
     private fun setupSwipeRefresh() {
         clSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorAccent, R.color.colorPrimaryDark)
-        clSwipeRefreshLayout.setOnRefreshListener { presenter.loadCheeses(true) }
+        clSwipeRefreshLayout.setOnRefreshListener { viewModel.forceLoad() }
+    }
+
+    private fun onLoading(cheeses: List<Cheese>?) {
+        clSwipeRefreshLayout.isRefreshing = true
+        cheeses?.let {
+            adapter.cheeses = it
+        }
+    }
+
+    private fun onSuccess(cheeses: List<Cheese>?) {
+        clSwipeRefreshLayout.isRefreshing = false
+        cheeses ?: return onError()
+        if (cheeses.isEmpty() && adapter.itemCount > 0) {
+            onError()
+        } else {
+            adapter.cheeses = cheeses
+        }
+    }
+
+    private fun onError(cheeses: List<Cheese>? = null) {
+        clSwipeRefreshLayout.isRefreshing = false
+        cheeses?.let {
+            adapter.cheeses = it
+        }
+        Snackbar.make(clCoordinatorLayout, R.string.failed_to_refresh_cheeses, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.retry) { viewModel.forceLoad() }
+                .show()
+    }
+
+    private inline fun <T> LiveData<T>.observe(crossinline block: (T?) -> Unit) {
+        observe(this@CheeseListActivity, Observer { block(it) })
     }
 }

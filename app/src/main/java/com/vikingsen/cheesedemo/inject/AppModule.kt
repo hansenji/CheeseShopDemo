@@ -8,11 +8,12 @@ import android.preference.PreferenceManager
 import com.vikingsen.cheesedemo.model.database.DatabaseModule
 import com.vikingsen.cheesedemo.util.SchedulerProvider
 import com.vikingsen.cheesedemo.util.SchedulerProvider.AppSchedulerProvider
+import com.vikingsen.cheesedemo.ux.ViewModelModule
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
-@Module(includes = arrayOf(DatabaseModule::class))
+@Module(includes = arrayOf(DatabaseModule::class, ViewModelModule::class))
 class AppModule(private val application: Application) {
 
     @Provides

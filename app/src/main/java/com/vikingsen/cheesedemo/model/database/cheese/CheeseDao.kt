@@ -6,7 +6,6 @@ import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import io.reactivex.Maybe
-import io.reactivex.Single
 import org.threeten.bp.LocalDateTime
 
 
@@ -37,8 +36,4 @@ interface CheeseDao  {
 
     @Query("SELECT * FROM cheese ORDER BY name")
     fun findAll(): LiveData<List<Cheese>>
-
-    @Query("SELECT * FROM cheese ORDER BY name")
-    @Deprecated("Move to live data")
-    fun findAllRx(): Single<List<Cheese>>
 }

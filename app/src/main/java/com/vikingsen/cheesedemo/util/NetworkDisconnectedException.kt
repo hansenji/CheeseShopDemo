@@ -1,4 +1,5 @@
 package com.vikingsen.cheesedemo.util
 
+import java.io.IOException
 
-class NetworkDisconnectedException : Exception()
+class NetworkDisconnectedException : IOException("Network disconnected.")
