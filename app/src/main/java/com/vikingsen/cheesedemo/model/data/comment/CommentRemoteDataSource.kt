@@ -8,7 +8,6 @@ import com.vikingsen.cheesedemo.model.webservice.dto.CommentRequestDto
 import com.vikingsen.cheesedemo.model.webservice.dto.CommentResponse
 import com.vikingsen.cheesedemo.util.NetworkDisconnectedException
 import com.vikingsen.cheesedemo.util.NetworkUtil
-import io.reactivex.Maybe
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -30,23 +29,19 @@ class CommentRemoteDataSource
     }
 
     @WorkerThread
-    fun syncComments(requestDtos: List<CommentRequestDto>): Maybe<List<CommentResponse>>? {
-        return Maybe.create<List<CommentResponse>> { emitter ->
-            try {
-                val response = cheeseService.postComment(requestDtos).execute()
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        emitter.onSuccess(it)
-                    }
-                    return@create
-                } else {
-                    Timber.e("Failed to post %d comments (%s) : %s", requestDtos.size, response.code(), response.message())
+    suspend fun syncComments(requestDtos: List<CommentRequestDto>): List<CommentResponse>? {
+        try {
+            val response = cheeseService.postComment(requestDtos).execute()
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    return it
                 }
-            } catch (e: Exception) {
-                Timber.e(e, "Exception fetching %d comments", requestDtos.size)
+            } else {
+                Timber.e("Failed to post %d comments (%s): %s", requestDtos.size, response.code(), response.message())
             }
-
-            emitter.onComplete()
+        } catch (e: Exception) {
+            Timber.e(e, "Exception posting %d comments", requestDtos.size)
         }
+        return null
     }
 }

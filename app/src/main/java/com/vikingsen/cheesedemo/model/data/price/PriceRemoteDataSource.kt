@@ -5,9 +5,9 @@ import android.arch.lifecycle.LiveData
 import com.vikingsen.cheesedemo.model.webservice.ApiResponse
 import com.vikingsen.cheesedemo.model.webservice.CheeseService
 import com.vikingsen.cheesedemo.model.webservice.dto.PriceDto
+import com.vikingsen.cheesedemo.util.CoroutineContextProvider
 import com.vikingsen.cheesedemo.util.NetworkDisconnectedException
 import com.vikingsen.cheesedemo.util.NetworkUtil
-import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
@@ -18,11 +18,14 @@ import javax.inject.Singleton
 
 @Singleton
 class PriceRemoteDataSource
-@Inject constructor(private val cheeseService: CheeseService,
-                    private val networkUtil: NetworkUtil) {
+@Inject constructor(
+        private val cheeseService: CheeseService,
+        private val networkUtil: NetworkUtil,
+        private val ccp: CoroutineContextProvider
+) {
 
     fun getPrice(cheeseId: Long): LiveData<ApiResponse<PriceDto>> {
-        return object: LiveData<ApiResponse<PriceDto>>() {
+        return object : LiveData<ApiResponse<PriceDto>>() {
             private val executed = AtomicBoolean(false)
 
             override fun onActive() {
@@ -32,7 +35,7 @@ class PriceRemoteDataSource
             }
 
             private fun execute() {
-                launch(CommonPool) {
+                launch(ccp.commonPool) {
                     postValue(null)
                     // Fake Network Time
                     delay(2, TimeUnit.SECONDS)

@@ -2,6 +2,7 @@ package com.vikingsen.cheesedemo.job
 
 import com.evernote.android.job.Job
 import com.vikingsen.cheesedemo.model.data.comment.CommentRepository
+import kotlinx.coroutines.experimental.runBlocking
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -10,18 +11,17 @@ import javax.inject.Inject
 class CommentSyncJob
 @Inject constructor(private val commentRepository: CommentRepository) : Job() {
 
-    override fun onRunJob(params: Job.Params): Job.Result {
+    override fun onRunJob(params: Job.Params): Job.Result = runBlocking {
         try {
             if (commentRepository.syncComments()) {
-                return Job.Result.SUCCESS
+                Job.Result.SUCCESS
             } else {
-                return Job.Result.RESCHEDULE
+                Job.Result.RESCHEDULE
             }
         } catch (e: Exception) {
-            Timber.e("Failed to post comments")
-            return Job.Result.RESCHEDULE
+            Timber.e(e,"Failed to post comments")
+            Job.Result.RESCHEDULE
         }
-
     }
 
     companion object {

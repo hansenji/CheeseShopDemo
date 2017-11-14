@@ -6,8 +6,8 @@ import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.preference.PreferenceManager
 import com.vikingsen.cheesedemo.model.database.DatabaseModule
-import com.vikingsen.cheesedemo.util.SchedulerProvider
-import com.vikingsen.cheesedemo.util.SchedulerProvider.AppSchedulerProvider
+import com.vikingsen.cheesedemo.util.CoroutineContextProvider
+import com.vikingsen.cheesedemo.util.CoroutineContextProvider.MainCoroutineContextProvider
 import com.vikingsen.cheesedemo.ux.ViewModelModule
 import dagger.Module
 import dagger.Provides
@@ -36,8 +36,6 @@ class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun provideSchedulerProvider(): SchedulerProvider {
-        return AppSchedulerProvider()
-    }
+    fun provideCoroutineContextProvider(): CoroutineContextProvider = MainCoroutineContextProvider
 
 }

@@ -6,8 +6,7 @@ import com.vikingsen.cheesedemo.model.database.comment.Comment
 import com.vikingsen.cheesedemo.model.database.comment.CommentDao
 import com.vikingsen.cheesedemo.model.webservice.dto.CommentDto
 import com.vikingsen.cheesedemo.model.webservice.dto.CommentResponse
-import com.vikingsen.cheesedemo.util.SchedulerProvider
-import io.reactivex.Single
+import com.vikingsen.cheesedemo.util.CoroutineContextProvider
 import org.threeten.bp.LocalDateTime
 import timber.log.Timber
 import java.util.UUID
@@ -16,9 +15,11 @@ import javax.inject.Singleton
 
 @Singleton
 class CommentLocalDataSource
-@Inject constructor(private val shopDatabase: ShopDatabase,
-                    private val commentDao: CommentDao,
-                    private val schedulerProvider: SchedulerProvider) {
+@Inject constructor(
+        private val shopDatabase: ShopDatabase,
+        private val commentDao: CommentDao,
+        private val coroutineContextProvider: CoroutineContextProvider
+) {
 
     fun getComments(cheeseId: Long) = commentDao.findAllByCheeseId(cheeseId)
 
@@ -51,8 +52,10 @@ class CommentLocalDataSource
         })
     }
 
-    fun getNotSyncedComments(): Single<List<Comment>> = commentDao.findAllNotSyncedRx()
+    @WorkerThread
+    suspend fun getNotSyncedComments(): List<Comment> = commentDao.findAllNotSynced()
 
+    @WorkerThread
     fun saveSyncResponses(responses: List<CommentResponse>): Boolean {
         val cached = LocalDateTime.now()
         try {
