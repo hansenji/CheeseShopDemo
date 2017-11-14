@@ -40,8 +40,8 @@ class CheeseDetailAdapter : RecyclerHeaderAdapter<CheeseDetailAdapter.HeaderView
             notifyDataSetChanged()
         }
     var isLoadingPrice = false
-        set(loadingPrice) {
-            field = loadingPrice
+        set(value) {
+            field = value
             notifyDataSetChanged()
         }
 
@@ -50,10 +50,10 @@ class CheeseDetailAdapter : RecyclerHeaderAdapter<CheeseDetailAdapter.HeaderView
     }
 
     override fun onCreateChildViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        when (viewType) {
-            TYPE_PRICE -> return PriceViewHolder(parent)
-            TYPE_DESCRIPTION -> return DescriptionViewHolder(parent)
-            TYPE_COMMENT -> return CommentViewHolder(parent)
+        return when (viewType) {
+            TYPE_PRICE -> PriceViewHolder(parent)
+            TYPE_DESCRIPTION -> DescriptionViewHolder(parent)
+            TYPE_COMMENT -> CommentViewHolder(parent)
             else -> throw IllegalArgumentException("Invalid type " + viewType)
         }
     }
@@ -63,12 +63,10 @@ class CheeseDetailAdapter : RecyclerHeaderAdapter<CheeseDetailAdapter.HeaderView
     }
 
     override fun onBindChildViewHolder(holder: RecyclerView.ViewHolder, childPosition: Int) {
-        if (holder is PriceViewHolder) {
-            bindPriceViewHolder(holder)
-        } else if (holder is DescriptionViewHolder) {
-            bindDescriptionViewHolder(holder)
-        } else if (holder is CommentViewHolder) {
-            bindCommentViewHolder(holder, childPosition - POSITION_FIRST_COMMENT)
+        when (holder) {
+            is PriceViewHolder -> bindPriceViewHolder(holder)
+            is DescriptionViewHolder -> bindDescriptionViewHolder(holder)
+            is CommentViewHolder -> bindCommentViewHolder(holder, childPosition - POSITION_FIRST_COMMENT)
         }
     }
 
@@ -91,10 +89,10 @@ class CheeseDetailAdapter : RecyclerHeaderAdapter<CheeseDetailAdapter.HeaderView
     }
 
     override fun getChildViewType(childPosition: Int): Int {
-        when (childPosition) {
-            POSITION_PRICE -> return TYPE_PRICE
-            POSITION_DESCRIPTION -> return TYPE_DESCRIPTION
-            else -> return TYPE_COMMENT
+        return when (childPosition) {
+            POSITION_PRICE -> TYPE_PRICE
+            POSITION_DESCRIPTION -> TYPE_DESCRIPTION
+            else -> TYPE_COMMENT
         }
     }
 
@@ -111,12 +109,10 @@ class CheeseDetailAdapter : RecyclerHeaderAdapter<CheeseDetailAdapter.HeaderView
 
     private fun bindPriceViewHolder(holder: PriceViewHolder) {
         val price = this.price
-        if (isLoadingPrice) {
-            holder.priceTextView.setText(R.string.fetching_price)
-        } else if (price != null) {
-            holder.priceTextView.text = String.format(Locale.getDefault(), "$%.2f", price.price)
-        } else {
-            holder.priceTextView.setText(R.string.price_unavailable)
+        when {
+            isLoadingPrice -> holder.priceTextView.setText(R.string.fetching_price)
+            price != null -> holder.priceTextView.text = String.format(Locale.getDefault(), "$%.2f", price.price)
+            else -> holder.priceTextView.setText(R.string.price_unavailable)
         }
     }
 

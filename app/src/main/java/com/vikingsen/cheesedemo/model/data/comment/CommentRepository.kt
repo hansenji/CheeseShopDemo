@@ -1,13 +1,18 @@
 package com.vikingsen.cheesedemo.model.data.comment
 
 
+import android.arch.lifecycle.LiveData
 import android.support.annotation.WorkerThread
 import com.vikingsen.cheesedemo.job.AppJobScheduler
+import com.vikingsen.cheesedemo.model.NetworkBoundResource
+import com.vikingsen.cheesedemo.model.Resource
 import com.vikingsen.cheesedemo.model.database.comment.Comment
+import com.vikingsen.cheesedemo.model.webservice.dto.CommentDto
 import com.vikingsen.cheesedemo.model.webservice.dto.CommentRequestDto
-import io.reactivex.Observable
-import io.reactivex.Single
-import timber.log.Timber
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.launch
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -15,35 +20,32 @@ import javax.inject.Singleton
 class CommentRepository @Inject
 internal constructor(private val remoteDataSource: CommentRemoteDataSource, private val localDataSource: CommentLocalDataSource, private val appJobScheduler: AppJobScheduler) {
 
-    fun getComments(cheeseId: Long, forceRefresh: Boolean): Single<List<Comment>> {
-        return Single.just(Pair(cheeseId, forceRefresh))
-                .flatMap<List<Comment>> {
-                    val id = it.first
-                    val force = it.second
+    fun getComments(cheeseId: Long, forceRefresh: Boolean): LiveData<Resource<List<Comment>>> = object : NetworkBoundResource<List<Comment>, List<CommentDto>>() {
+        override fun loadFromDb(): LiveData<List<Comment>> = localDataSource.getComments(cheeseId)
 
-                    val localComments = localDataSource.getComments(id)
+        suspend override fun shouldFetch(data: List<Comment>?): Boolean {
+            if (forceRefresh || data == null) {
+                return true
+            }
 
-                    if (force || localDataSource.areCommentsStale(id)) {
-                        Timber.d("COMMENTS ARE STALE")
-                        return@flatMap getAndSaveRemoteComments(id)
+            val cacheExpiration = LocalDateTime.now().minus(CACHE_VALID_AMOUNT, CACHE_VALID_UNIT)
+            // GOTCHA - DOUBLE CHECK THAT THE CHECK MATCHES THE METHOD NAME (isBefore vs isAfter)
+            return data.mapNotNull { it.cached }.min()?.isBefore(cacheExpiration) ?: true
+        }
 
-                                // Always load from the database to display not yet synced comments
-                                // We will be notified through modelChanges to load from the database
-                                .flatMap { _ -> localComments }
+        suspend override fun fetchFromNetwork(): NetworkResponse<List<CommentDto>> = remoteDataSource.getComments(cheeseId)
 
-                    } else {
-                        Timber.d("COMMENTS ARE FRESH")
-                        return@flatMap localComments
-                    }
-                }
-    }
+        suspend override fun saveNetworkData(data: List<CommentDto>) {
+            localDataSource.saveCommentsFromServer(data)
+        }
+
+    }.asLiveData()
 
     fun addComment(cheeseId: Long, user: String, comment: String) {
-        localDataSource.saveNewComment(cheeseId, user, comment)
-                .subscribe(
-                        { appJobScheduler.scheduleCommentSync() },
-                        { e -> Timber.e(e, "Failed to save comment") }
-                )
+        launch(CommonPool) {
+            localDataSource.saveNewComment(cheeseId, user, comment)
+            appJobScheduler.scheduleCommentSync()
+        }
     }
 
     @WorkerThread
@@ -58,19 +60,8 @@ internal constructor(private val remoteDataSource: CommentRemoteDataSource, priv
                 .blockingGet(false)
     }
 
-    /**
-     * Auto subscribes on computation scheduler
-     */
-    fun modelChanges(): Observable<CommentChange> {
-        return localDataSource.modelChanges()
-    }
-
-    private fun getAndSaveRemoteComments(cheeseId: Long): Single<Boolean> {
-        return remoteDataSource.getComments(cheeseId)
-                .map { localDataSource.saveCommentsFromServer(it) }
-                .onErrorReturn {
-                    Timber.e(it, "Failed to fetch comments for cheese: %d", cheeseId)
-                    return@onErrorReturn false
-                }
+    companion object {
+        private val CACHE_VALID_AMOUNT = 1L
+        private val CACHE_VALID_UNIT = ChronoUnit.DAYS
     }
 }

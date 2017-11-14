@@ -22,7 +22,7 @@ interface CheeseDao  {
     fun deleteAll(): Int
 
     @Query("SELECT * FROM cheese WHERE id = :id")
-    fun findById(id: Long): Cheese?
+    fun findById(id: Long): LiveData<Cheese>
 
     @Query("SELECT * FROM cheese WHERE id = :id")
     @Deprecated("Move to live data")

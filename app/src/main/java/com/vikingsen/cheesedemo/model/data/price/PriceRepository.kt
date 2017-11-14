@@ -1,7 +1,9 @@
 package com.vikingsen.cheesedemo.model.data.price
 
-import io.reactivex.Single
-import java.util.concurrent.TimeUnit
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Transformations
+import com.vikingsen.cheesedemo.model.Resource
+import com.vikingsen.cheesedemo.model.webservice.dto.PriceDto
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -9,20 +11,19 @@ import javax.inject.Singleton
 class PriceRepository @Inject
 internal constructor(private val remoteDataSource: PriceRemoteDataSource) {
 
-    fun getPrice(cheeseId: Long, forceRefresh: Boolean): Single<Price> {
-        return Single.just(Pair(cheeseId, forceRefresh))
-                .flatMap { pair ->
+    fun getPrice(cheeseId: Long, @Suppress("UNUSED_PARAMETER") forceRefresh: Boolean): LiveData<Resource<Price>> {
+        return Transformations.map(remoteDataSource.getPrice(cheeseId)) {
+            when {
+                it == null -> Resource.Loading<Price>()
+                it.successful -> Resource.Success(mapToPrice(it.data))
+                else -> Resource.Error<Price>()
+            }
+        }
+    }
 
-                    // Fake Network time
-                    try {
-                        TimeUnit.SECONDS.sleep(2)
-                    } catch (ignore: Exception) {
-                        // Ignore
-                    }
-
-                    // Only pull from the network no caching
-                    remoteDataSource.getPrice(pair.first)
-                            .map { (_, cheeseId, price) -> Price(cheeseId, price) }
-                }
+    private fun mapToPrice(data: PriceDto?): Price? {
+        return data?.let { (_, cheeseId, price) ->
+            Price(cheeseId, price)
+        }
     }
 }

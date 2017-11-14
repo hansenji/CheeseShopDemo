@@ -1,5 +1,9 @@
 package com.vikingsen.cheesedemo.ux.cheesedetail
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
@@ -12,6 +16,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.vikingsen.cheesedemo.BuildConfig
 import com.vikingsen.cheesedemo.R
 import com.vikingsen.cheesedemo.inject.Injector
+import com.vikingsen.cheesedemo.model.Resource
 import com.vikingsen.cheesedemo.model.data.price.Price
 import com.vikingsen.cheesedemo.model.database.cheese.Cheese
 import com.vikingsen.cheesedemo.model.database.comment.Comment
@@ -22,10 +27,11 @@ import pocketknife.PocketKnife
 import javax.inject.Inject
 
 
-class CheeseDetailActivity : AppCompatActivity(), CheeseDetailContract.View, AddCommentDialogFragment.OnTextListener {
+class CheeseDetailActivity : AppCompatActivity(), AddCommentDialogFragment.OnTextListener {
 
     @Inject
-    lateinit var presenter: CheeseDetailPresenter
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
 
     @BindExtra(EXTRA_CHEESE_ID)
     var cheeseId: Long = 0
@@ -33,19 +39,17 @@ class CheeseDetailActivity : AppCompatActivity(), CheeseDetailContract.View, Add
     lateinit var cheeseName: String
 
     private val adapter = CheeseDetailAdapter()
+    private val viewModel by lazy { ViewModelProviders.of(this, viewModelFactory).get(CheeseDetailViewModel::class.java) }
     private var commentMenuItem: MenuItem? = null
 
     init {
-        Injector.get()
-                .include(CheeseDetailModule(this))
-                .inject(this)
+        Injector.get().inject(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cheese_detail)
         PocketKnife.bindExtras(this)
-        presenter.init(cheeseId)
 
         setSupportActionBar(cdToolbar)
         val actionBar = supportActionBar
@@ -61,16 +65,32 @@ class CheeseDetailActivity : AppCompatActivity(), CheeseDetailContract.View, Add
                 fragment.setOnTextListener(this)
             }
         }
+
+        setupObservers()
+
+        viewModel.setCheeseId(cheeseId)
     }
 
-    override fun onStart() {
-        super.onStart()
-        presenter.start()
-    }
-
-    override fun onStop() {
-        presenter.stop()
-        super.onStop()
+    private fun setupObservers() {
+        viewModel.cheese.observeNotNull {
+            when (it) {
+                is Resource.Success -> onCheeseSuccess(it)
+                is Resource.Error -> onCheeseError(it)
+            }
+        }
+        viewModel.comments.observeNotNull {
+            when (it) {
+                is Resource.Success -> onCommentsSuccess(it)
+                is Resource.Error -> onCommentsError(it)
+            }
+        }
+        viewModel.price.observeNotNull {
+            when (it) {
+                is Resource.Loading -> onPriceLoading()
+                is Resource.Success -> onPriceSuccess(it)
+                is Resource.Error -> onPriceError()
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -89,59 +109,14 @@ class CheeseDetailActivity : AppCompatActivity(), CheeseDetailContract.View, Add
         when (item.itemId) {
             android.R.id.home -> finish()
             R.id.menu_item_comment -> showNewCommentDialog()
-            R.id.menu_item_refresh -> presenter.reload()
+            R.id.menu_item_refresh -> viewModel.reload()
             else -> return super.onOptionsItemSelected(item)
         }
         return true
     }
 
-    override fun showCheese(cheese: Cheese) {
-        adapter.cheese = cheese
-        loadBackdrop(cheese.imageUrl)
-        invalidateOptionsMenu()
-    }
-
-    override fun showCheeseError() {
-        Snackbar.make(cdCoordinatorLayout, R.string.failed_to_load_cheese, Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.retry) { presenter.reload() }
-                .show()
-        invalidateOptionsMenu()
-        updateFabVisibility()
-    }
-
-    override fun showMissingCheese() {
-        Snackbar.make(cdCoordinatorLayout, R.string.unable_to_find_cheese, Snackbar.LENGTH_INDEFINITE).show()
-        updateFabVisibility()
-        invalidateOptionsMenu()
-    }
-
-    override fun showComments(comments: List<Comment>) {
-        if (!comments.isEmpty() || adapter.commentCount <= 0) {
-            adapter.comments = comments
-        }
-    }
-
-    override fun showCommentError() {
-        // TODO DO SOMETHING
-    }
-
-    override fun showPriceLoading(loading: Boolean) {
-        adapter.isLoadingPrice = loading
-        updateFabVisibility()
-    }
-
-    override fun showPrice(price: Price) {
-        adapter.price = price
-        updateFabVisibility()
-    }
-
-    override fun showPriceError(networkDisconnected: Boolean) {
-        adapter.price = null
-        updateFabVisibility()
-    }
-
     override fun onTextSubmitted(text: CharSequence) {
-        presenter.addNewComment(BuildConfig.USER_NAME, text.toString())
+        viewModel.addNewComment(BuildConfig.USER_NAME, text.toString())
     }
 
     private fun setupRecyclerView() {
@@ -172,6 +147,72 @@ class CheeseDetailActivity : AppCompatActivity(), CheeseDetailContract.View, Add
         val dialogFragment = AddCommentDialogFragment()
         dialogFragment.setOnTextListener(this)
         dialogFragment.show(supportFragmentManager, AddCommentDialogFragment.TAG)
+    }
+
+    private fun onCheeseSuccess(resource: Resource.Success<Cheese>) {
+        val cheese = resource.data ?: return showMissingCheese()
+        adapter.cheese = cheese
+        loadBackdrop(cheese.imageUrl)
+        invalidateOptionsMenu()
+    }
+
+    private fun onCheeseError(resource: Resource.Error<Cheese>) {
+        resource.data?.let {
+            adapter.cheese = it
+        }
+        Snackbar.make(cdCoordinatorLayout, R.string.failed_to_load_cheese, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.retry) { viewModel.reload() }
+                .show()
+        invalidateOptionsMenu()
+        updateFabVisibility()
+    }
+
+    private fun showMissingCheese() {
+        Snackbar.make(cdCoordinatorLayout, R.string.unable_to_find_cheese, Snackbar.LENGTH_INDEFINITE).show()
+        updateFabVisibility()
+        invalidateOptionsMenu()
+    }
+
+    private fun onCommentsSuccess(resource: Resource.Success<List<Comment>>) {
+        resource.data?.let {
+            if (it.isNotEmpty() || adapter.commentCount <= 0) {
+                adapter.comments = it
+            }
+        }
+    }
+
+    private fun onCommentsError(resource: Resource.Error<List<Comment>>) {
+        resource.data?.let {
+            if (it.isNotEmpty() || adapter.commentCount <= 0) {
+                adapter.comments = it
+            }
+        }
+
+        // Show Some Error
+    }
+
+    private fun onPriceLoading() {
+        adapter.isLoadingPrice = true
+        updateFabVisibility()
+    }
+
+    private fun onPriceSuccess(resource: Resource.Success<Price>) {
+        adapter.isLoadingPrice = false
+        adapter.price = resource.data
+        updateFabVisibility()
+    }
+
+    private fun onPriceError() {
+        adapter.isLoadingPrice = false
+        adapter.price = null
+        updateFabVisibility()
+    }
+
+    private inline fun <T> LiveData<T>.observeNotNull(crossinline block: (T?) -> Unit) {
+        observe(this@CheeseDetailActivity, Observer {
+            it ?: return@Observer
+            block(it)
+        })
     }
 
     companion object {

@@ -6,9 +6,7 @@ import com.vikingsen.cheesedemo.model.database.ShopDatabase
 import com.vikingsen.cheesedemo.model.database.cheese.Cheese
 import com.vikingsen.cheesedemo.model.database.cheese.CheeseDao
 import com.vikingsen.cheesedemo.model.webservice.dto.CheeseDto
-import io.reactivex.Maybe
 import org.threeten.bp.LocalDateTime
-import org.threeten.bp.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,13 +20,8 @@ class CheeseLocalDataSource
         return cheeseDao.findAll()
     }
 
-    fun getCheese(cheeseId: Long): Maybe<Cheese> {
-        return cheeseDao.findByIdRx(cheeseId)
-    }
-
-    fun areCheeseStale(cheeseId: Long): Boolean {
-        val cacheExpiration = LocalDateTime.now().minus(CACHE_VALID_AMOUNT, CACHE_VALID_UNIT)
-        return cheeseDao.findCacheDataById(cheeseId)?.isBefore(cacheExpiration) ?: true
+    fun getCheese(cheeseId: Long): LiveData<Cheese> {
+        return cheeseDao.findById(cheeseId)
     }
 
     fun saveCheeses(cheeseDtos: List<CheeseDto>): List<Cheese> {
@@ -60,11 +53,5 @@ class CheeseLocalDataSource
         cheese.cached = LocalDateTime.now()
         cheeseDao.insert(cheese)
         return cheese
-    }
-
-    companion object {
-
-        private val CACHE_VALID_AMOUNT = 1L
-        private val CACHE_VALID_UNIT = ChronoUnit.HOURS
     }
 }
