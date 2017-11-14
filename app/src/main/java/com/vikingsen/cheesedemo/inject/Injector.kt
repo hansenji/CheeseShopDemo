@@ -14,7 +14,5 @@ object Injector {
     }
 
     @JvmStatic
-    fun get(): AppComponent {
-        return appComponent
-    }
+    fun get(): AppComponent = appComponent
 }

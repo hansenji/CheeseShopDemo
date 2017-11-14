@@ -13,7 +13,6 @@ import java.io.IOException
 class LocalDateTimeDeserializer : StdDeserializer<LocalDateTime>(LocalDateTime::class.java) {
 
     @Throws(IOException::class)
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LocalDateTime {
-        return LocalDateTime.parse(p.valueAsString, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-    }
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LocalDateTime =
+            LocalDateTime.parse(p.valueAsString, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 }

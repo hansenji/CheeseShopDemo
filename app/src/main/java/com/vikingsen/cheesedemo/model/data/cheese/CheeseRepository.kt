@@ -34,9 +34,7 @@ class CheeseRepository
                     return data.map { it.cached }.min()?.isBefore(cacheExpiration) ?: true
                 }
 
-                suspend override fun fetchFromNetwork(): NetworkResponse<List<CheeseDto>> {
-                    return remoteDataSource.getCheeses()
-                }
+                suspend override fun fetchFromNetwork(): NetworkResponse<List<CheeseDto>> = remoteDataSource.getCheeses()
 
                 suspend override fun saveNetworkData(data: List<CheeseDto>) {
                     localDataSource.saveCheeses(data)
@@ -58,9 +56,7 @@ class CheeseRepository
                     return data.cached.isBefore(cacheExpiration)
                 }
 
-                suspend override fun fetchFromNetwork(): NetworkResponse<CheeseDto> {
-                    return remoteDataSource.getCheese(cheeseId)
-                }
+                suspend override fun fetchFromNetwork(): NetworkResponse<CheeseDto> = remoteDataSource.getCheese(cheeseId)
 
                 suspend override fun saveNetworkData(data: CheeseDto) {
                     localDataSource.saveCheese(data)

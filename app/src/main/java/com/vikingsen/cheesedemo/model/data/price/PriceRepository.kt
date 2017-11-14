@@ -13,6 +13,7 @@ internal constructor(private val remoteDataSource: PriceRemoteDataSource) {
 
     fun getPrice(cheeseId: Long, @Suppress("UNUSED_PARAMETER") forceRefresh: Boolean): LiveData<Resource<Price>> {
         return Transformations.map(remoteDataSource.getPrice(cheeseId)) {
+            @Suppress("RemoveExplicitTypeArguments") //Technically I only need one <Price>
             when {
                 it == null -> Resource.Loading<Price>()
                 it.successful -> Resource.Success(mapToPrice(it.data))

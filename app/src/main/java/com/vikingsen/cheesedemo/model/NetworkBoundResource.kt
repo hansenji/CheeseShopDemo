@@ -47,18 +47,14 @@ constructor(protected val coroutineContext: CoroutineContext = CommonPool) {
     suspend abstract fun saveNetworkData(data: T)
 
     @WorkerThread
-    protected open fun processNetworkResponse(response: NetworkResponse<T>): T? {
-        return response.data
-    }
+    protected open fun processNetworkResponse(response: NetworkResponse<T>): T? = response.data
 
     /**
      * return message id to display to the user, 0 for no/default message
      */
     @MainThread
     @StringRes
-    protected open fun getErrorMessageId(error: Throwable?, errorMessage: String?): Int {
-        return 0
-    }
+    protected open fun getErrorMessageId(error: Throwable?, errorMessage: String?): Int = 0
 
     @MainThread
     protected open fun onFetchFailed() {

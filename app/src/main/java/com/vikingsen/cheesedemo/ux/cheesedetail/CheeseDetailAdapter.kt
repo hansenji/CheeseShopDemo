@@ -45,17 +45,13 @@ class CheeseDetailAdapter : RecyclerHeaderAdapter<CheeseDetailAdapter.HeaderView
             notifyDataSetChanged()
         }
 
-    override fun onCreateHeaderViewHolder(parent: ViewGroup, viewType: Int): HeaderViewHolder {
-        return HeaderViewHolder(parent)
-    }
+    override fun onCreateHeaderViewHolder(parent: ViewGroup, viewType: Int) = HeaderViewHolder(parent)
 
-    override fun onCreateChildViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (viewType) {
-            TYPE_PRICE -> PriceViewHolder(parent)
-            TYPE_DESCRIPTION -> DescriptionViewHolder(parent)
-            TYPE_COMMENT -> CommentViewHolder(parent)
-            else -> throw IllegalArgumentException("Invalid type " + viewType)
-        }
+    override fun onCreateChildViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder = when (viewType) {
+        TYPE_PRICE -> PriceViewHolder(parent)
+        TYPE_DESCRIPTION -> DescriptionViewHolder(parent)
+        TYPE_COMMENT -> CommentViewHolder(parent)
+        else -> throw IllegalArgumentException("Invalid type " + viewType)
     }
 
     override fun onBindHeaderViewHolder(holder: HeaderViewHolder, firstChildPosition: Int) {
@@ -88,24 +84,18 @@ class CheeseDetailAdapter : RecyclerHeaderAdapter<CheeseDetailAdapter.HeaderView
         return RecyclerView.NO_ID
     }
 
-    override fun getChildViewType(childPosition: Int): Int {
-        return when (childPosition) {
-            POSITION_PRICE -> TYPE_PRICE
-            POSITION_DESCRIPTION -> TYPE_DESCRIPTION
-            else -> TYPE_COMMENT
-        }
+    override fun getChildViewType(childPosition: Int): Int = when (childPosition) {
+        POSITION_PRICE -> TYPE_PRICE
+        POSITION_DESCRIPTION -> TYPE_DESCRIPTION
+        else -> TYPE_COMMENT
     }
 
     val commentCount: Int
         get() = comments.size
 
-    fun hasCheese(): Boolean {
-        return cheese != null
-    }
+    fun hasCheese(): Boolean = cheese != null
 
-    fun hasPrice(): Boolean {
-        return price != null
-    }
+    fun hasPrice(): Boolean = price != null
 
     private fun bindPriceViewHolder(holder: PriceViewHolder) {
         val price = this.price
@@ -136,9 +126,7 @@ class CheeseDetailAdapter : RecyclerHeaderAdapter<CheeseDetailAdapter.HeaderView
     }
 
     @ColorInt
-    private fun getTextColor(syncedWithServer: Boolean): Int {
-        return if (syncedWithServer) 0xde000000.toInt() else 0x8a000000.toInt()
-    }
+    private fun getTextColor(syncedWithServer: Boolean): Int = if (syncedWithServer) 0xde000000.toInt() else 0x8a000000.toInt()
 
     private fun getDateText(comment: Comment): String {
         val date = comment.created

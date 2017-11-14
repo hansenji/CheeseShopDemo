@@ -45,9 +45,7 @@ internal class CheeseListAdapter(private val glideRequestManager: RequestManager
                 .into(holder.icImageView)
     }
 
-    override fun getItemCount(): Int {
-        return cheeses.size
-    }
+    override fun getItemCount(): Int = cheeses.size
 
     internal class CheeseViewHolder(parent: ViewGroup) : ClickableViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_cheese, parent, false)) {
         var icImageView: ImageView = itemView.icImageView

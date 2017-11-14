@@ -6,11 +6,12 @@ import android.support.v4.graphics.drawable.DrawableCompat
 import android.view.Menu
 import android.view.MenuItem
 
+@Suppress("MemberVisibilityCanPrivate")
 object DrawableUtil {
 
     @JvmStatic
     fun tintAllMenuIcons(menu: Menu, @ColorInt colorInt: Int) {
-        (0..menu.size() - 1).map { menu.getItem(it) }
+        (0 until menu.size()).map { menu.getItem(it) }
                 .forEach { tintMenuItemIcon(it, colorInt) }
     }
 

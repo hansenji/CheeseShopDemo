@@ -19,7 +19,7 @@ class CommentRemoteDataSource
 
     fun getComments(cheeseId: Long): ApiResponse<List<CommentDto>> {
         try {
-            if (networkUtil.isConnected) {
+            if (networkUtil.isConnected()) {
                 return ApiResponse(cheeseService.getComments(cheeseId).execute())
             }
         } catch (e: Exception) {

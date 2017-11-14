@@ -18,14 +18,13 @@ import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import javax.inject.Singleton
 
+@Suppress("unused")
 @Module
 class WebServiceModule {
 
     @Provides
     @Singleton
-    internal fun provideHttpLoggingInterceptor(prefs: Prefs): HttpLoggingInterceptor {
-        return HttpLoggingInterceptor().setLevel(prefs.httpLoggingLevel)
-    }
+    internal fun provideHttpLoggingInterceptor(prefs: Prefs): HttpLoggingInterceptor = HttpLoggingInterceptor().setLevel(prefs.httpLoggingLevel)
 
     @Provides
     @Singleton

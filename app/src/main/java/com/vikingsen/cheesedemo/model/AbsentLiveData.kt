@@ -14,9 +14,7 @@ private constructor() : LiveData<R>() {
     }
 
     companion object {
-        fun <T> create(): LiveData<T> {
-            return AbsentLiveData()
-        }
+        fun <T> create(): LiveData<T> = AbsentLiveData()
 
         /**
          * null only absentValue

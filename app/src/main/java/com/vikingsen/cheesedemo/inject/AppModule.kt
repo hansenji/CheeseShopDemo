@@ -18,21 +18,15 @@ class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun provideApplication(): Application {
-        return application
-    }
+    fun provideApplication(): Application = application
 
     @Provides
     @Singleton
-    fun provideSharedPreferences(application: Application): SharedPreferences {
-        return PreferenceManager.getDefaultSharedPreferences(application)
-    }
+    fun provideSharedPreferences(application: Application): SharedPreferences = PreferenceManager.getDefaultSharedPreferences(application)
 
     @Provides
     @Singleton
-    fun provideConnectivityManager(application: Application): ConnectivityManager {
-        return application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    }
+    fun provideConnectivityManager(application: Application) = application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     @Provides
     @Singleton

@@ -19,10 +19,8 @@ class LocalDateTimeConverter {
     }
 
     @TypeConverter
-    fun fromLocalDateTimeToString(value: LocalDateTime?): String? {
-        return when(value) {
-            null -> null
-            else -> DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(value)
-        }
+    fun fromLocalDateTimeToString(value: LocalDateTime?): String? = when(value) {
+        null -> null
+        else -> DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(value)
     }
 }

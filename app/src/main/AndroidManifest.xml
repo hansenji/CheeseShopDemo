@@ -1,10 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.vikingsen.cheesedemo"
-    >
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.vikingsen.cheesedemo">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".App"
@@ -14,16 +14,16 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        >
-        <activity android:name=".ux.cheeselist.CheeseListActivity"
-                  android:label="@string/cheese_shop"
-            >
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity
+            android:name=".ux.cheeselist.CheeseListActivity"
+            android:label="@string/cheese_shop">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ux.cheesedetail.CheeseDetailActivity"/>
+        <activity android:name=".ux.cheesedetail.CheeseDetailActivity" />
     </application>
 
 </manifest>

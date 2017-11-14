@@ -40,7 +40,7 @@ class PriceRemoteDataSource
                     // Fake Network Time
                     delay(2, TimeUnit.SECONDS)
                     try {
-                        if (networkUtil.isConnected) {
+                        if (networkUtil.isConnected()) {
                             postValue(ApiResponse(cheeseService.getPrice(cheeseId).execute()))
                             return@launch
                         }

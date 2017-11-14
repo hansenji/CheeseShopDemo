@@ -11,13 +11,11 @@ import javax.inject.Singleton
 class AppJobCreator
 @Inject constructor(private val commentSyncJobProvider: Provider<CommentSyncJob>) : JobCreator {
 
-    override fun create(tag: String): Job? {
-        when (tag) {
-            CommentSyncJob.TAG -> return commentSyncJobProvider.get()
-            else -> {
-                Timber.w("Cannot find job for tag [%s]. Be sure to add Job to AppJobCreator", tag)
-                return null
-            }
+    override fun create(tag: String): Job? = when (tag) {
+        CommentSyncJob.TAG -> commentSyncJobProvider.get()
+        else -> {
+            Timber.w("Cannot find job for tag [%s]. Be sure to add Job to AppJobCreator", tag)
+            null
         }
     }
 }

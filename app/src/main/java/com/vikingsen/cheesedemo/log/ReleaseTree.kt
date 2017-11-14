@@ -7,11 +7,9 @@ import timber.log.Timber
 
 class ReleaseTree : Timber.Tree() {
 
-    override fun isLoggable(tag: String?, priority: Int): Boolean {
-        when (priority) {
-            Log.VERBOSE, Log.DEBUG, Log.INFO -> return false
-            else -> return true
-        }
+    override fun isLoggable(tag: String?, priority: Int): Boolean = when (priority) {
+        Log.VERBOSE, Log.DEBUG, Log.INFO -> false
+        else -> true
     }
 
 

@@ -6,7 +6,6 @@ import com.vikingsen.cheesedemo.model.database.comment.Comment
 import com.vikingsen.cheesedemo.model.database.comment.CommentDao
 import com.vikingsen.cheesedemo.model.webservice.dto.CommentDto
 import com.vikingsen.cheesedemo.model.webservice.dto.CommentResponse
-import com.vikingsen.cheesedemo.util.CoroutineContextProvider
 import org.threeten.bp.LocalDateTime
 import timber.log.Timber
 import java.util.UUID
@@ -17,8 +16,7 @@ import javax.inject.Singleton
 class CommentLocalDataSource
 @Inject constructor(
         private val shopDatabase: ShopDatabase,
-        private val commentDao: CommentDao,
-        private val coroutineContextProvider: CoroutineContextProvider
+        private val commentDao: CommentDao
 ) {
 
     fun getComments(cheeseId: Long) = commentDao.findAllByCheeseId(cheeseId)

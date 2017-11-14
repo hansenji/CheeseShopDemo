@@ -9,7 +9,7 @@
     android:foreground="?attr/selectableItemBackground"
     android:padding="4dp"
     app:cardUseCompatPadding="true"
-    >
+    tools:keep="@layout/item_cheese">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"

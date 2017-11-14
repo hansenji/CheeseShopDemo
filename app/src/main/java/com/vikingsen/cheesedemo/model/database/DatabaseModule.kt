@@ -24,13 +24,9 @@ class DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideCheeseDao(shopDatabase: ShopDatabase): CheeseDao {
-        return shopDatabase.cheeseDao()
-    }
+    fun provideCheeseDao(shopDatabase: ShopDatabase): CheeseDao = shopDatabase.cheeseDao()
 
     @Provides
     @Singleton
-    fun provideCommentDao(shopDatabase: ShopDatabase): CommentDao {
-        return shopDatabase.commentDao()
-    }
+    fun provideCommentDao(shopDatabase: ShopDatabase): CommentDao = shopDatabase.commentDao()
 }

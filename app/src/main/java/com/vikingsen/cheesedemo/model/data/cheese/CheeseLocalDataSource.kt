@@ -16,13 +16,9 @@ class CheeseLocalDataSource
         private val shopDatabase: ShopDatabase,
         private val cheeseDao: CheeseDao
 ) {
-    fun getCheeses(): LiveData<List<Cheese>> {
-        return cheeseDao.findAll()
-    }
+    fun getCheeses(): LiveData<List<Cheese>> = cheeseDao.findAll()
 
-    fun getCheese(cheeseId: Long): LiveData<Cheese> {
-        return cheeseDao.findById(cheeseId)
-    }
+    fun getCheese(cheeseId: Long): LiveData<Cheese> = cheeseDao.findById(cheeseId)
 
     fun saveCheeses(cheeseDtos: List<CheeseDto>): List<Cheese> {
         val cached = LocalDateTime.now()

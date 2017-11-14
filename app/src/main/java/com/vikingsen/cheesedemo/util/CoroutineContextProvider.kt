@@ -6,6 +6,7 @@ import kotlinx.coroutines.experimental.newSingleThreadContext
 import kotlin.coroutines.experimental.CoroutineContext
 
 
+@Suppress("unused")
 interface CoroutineContextProvider {
     val ui: CoroutineContext
     val commonPool: CoroutineContext

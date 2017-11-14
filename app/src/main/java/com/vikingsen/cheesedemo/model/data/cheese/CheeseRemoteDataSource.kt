@@ -17,7 +17,7 @@ constructor(private val cheeseService: CheeseService,
 
     fun getCheeses(): ApiResponse<List<CheeseDto>> {
         try {
-            if (networkUtil.isConnected) {
+            if (networkUtil.isConnected()) {
                 return ApiResponse(cheeseService.getCheeses().execute())
             }
         } catch (e: Exception) {
@@ -28,7 +28,7 @@ constructor(private val cheeseService: CheeseService,
 
     fun getCheese(cheeseId: Long): ApiResponse<CheeseDto> {
         try {
-            if (networkUtil.isConnected) {
+            if (networkUtil.isConnected()) {
                 return ApiResponse(cheeseService.getCheese(cheeseId).execute())
             }
         } catch (e: Exception) {

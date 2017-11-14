@@ -8,10 +8,7 @@ import javax.inject.Singleton
 class NetworkUtil
 @Inject constructor(private val connectivityManager: ConnectivityManager) {
 
-    val isConnected: Boolean
-        get() = isConnected(true)
-
-    fun isConnected(allowMobileNetwork: Boolean): Boolean {
+    fun isConnected(allowMobileNetwork: Boolean = true): Boolean {
         val info = connectivityManager.activeNetworkInfo
 
         if (info != null) {
