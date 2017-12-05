@@ -1,9 +1,8 @@
 package com.vikingsen.cheesedemo.model.data.comment
 
 import android.support.annotation.WorkerThread
-import com.vikingsen.cheesedemo.model.database.ShopDatabase
+import com.vikingsen.cheesedemo.model.database.ShopDatabaseManager
 import com.vikingsen.cheesedemo.model.database.comment.Comment
-import com.vikingsen.cheesedemo.model.database.comment.CommentDao
 import com.vikingsen.cheesedemo.model.webservice.dto.CommentDto
 import com.vikingsen.cheesedemo.model.webservice.dto.CommentResponse
 import org.threeten.bp.LocalDateTime
@@ -15,13 +14,13 @@ import javax.inject.Singleton
 @Singleton
 class CommentLocalDataSource
 @Inject constructor(
-        private val shopDatabase: ShopDatabase,
-        private val commentDao: CommentDao
+        private val shopDatabaseManager: ShopDatabaseManager
 ) {
 
-    fun getComments(cheeseId: Long) = commentDao.findAllByCheeseId(cheeseId)
+    fun getComments(cheeseId: Long) = shopDatabaseManager.getCommentDao().findAllByCheeseId(cheeseId)
 
     fun saveCommentsFromServer(commentDtos: List<CommentDto>): Boolean {
+        val commentDao = shopDatabaseManager.getCommentDao()
         val cached = LocalDateTime.now()
         val comments = commentDtos.map { (guid, cheeseId, user, text, created) ->
             val comment = commentDao.findById(guid) ?: Comment().apply { this.id = guid }
@@ -41,7 +40,7 @@ class CommentLocalDataSource
 
     @WorkerThread
     suspend fun saveNewComment(cheeseId: Long, user: String, comment: String) {
-        commentDao.insert(Comment().apply {
+        shopDatabaseManager.getCommentDao().insert(Comment().apply {
             this.id = UUID.randomUUID().toString()
             this.cheeseId = cheeseId
             this.user = user
@@ -51,15 +50,15 @@ class CommentLocalDataSource
     }
 
     @WorkerThread
-    suspend fun getNotSyncedComments(): List<Comment> = commentDao.findAllNotSynced()
+    suspend fun getNotSyncedComments(): List<Comment> = shopDatabaseManager.getCommentDao().findAllNotSynced()
 
     @WorkerThread
     fun saveSyncResponses(responses: List<CommentResponse>): Boolean {
         val cached = LocalDateTime.now()
         try {
-            shopDatabase.runInTransaction {
+            shopDatabaseManager.getDatabase().runInTransaction {
                 responses.filter { it.isSuccessful }
-                        .map { commentDao.setSynced(it.guid, cached) }
+                        .map { shopDatabaseManager.getCommentDao().setSynced(it.guid, cached) }
             }
         } catch (e: Exception) {
             Timber.w(e, "Failed to save sync responses")

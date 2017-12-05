@@ -114,7 +114,7 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.android.support:multidex:1.0.2'
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.19.3"
 
@@ -126,8 +126,8 @@ dependencies {
 
     // Custom SQLite database
     implementation 'org.sqlite.sqliteX:sqlite-android:3.15.2'
-    implementation "org.dbtools:dbtools-room:1.1.0"
-    implementation "org.dbtools:dbtools-room-sqliteorg:1.1.0"
+    implementation "org.dbtools:dbtools-room:$dbtoolsRoomVersion"
+    implementation "org.dbtools:dbtools-room-sqliteorg:$dbtoolsRoomVersion"
 
     implementation 'me.eugeniomarletti:android-extras-delegates:1.0.5'
 

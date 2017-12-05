@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.preference.PreferenceManager
-import com.vikingsen.cheesedemo.model.database.DatabaseModule
 import com.vikingsen.cheesedemo.util.CoroutineContextProvider
 import com.vikingsen.cheesedemo.util.CoroutineContextProvider.MainCoroutineContextProvider
 import com.vikingsen.cheesedemo.ux.ViewModelModule
@@ -13,7 +12,7 @@ import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
-@Module(includes = arrayOf(DatabaseModule::class, ViewModelModule::class))
+@Module(includes = [ViewModelModule::class])
 class AppModule(private val application: Application) {
 
     @Provides
