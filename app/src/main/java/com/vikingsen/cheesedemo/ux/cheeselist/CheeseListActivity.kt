@@ -28,7 +28,7 @@ class CheeseListActivity : AppCompatActivity() {
     private val viewModel by lazy { ViewModelProviders.of(this, viewModelFactory).get(CheeseListViewModel::class.java) }
     private val adapter by lazy {
         CheeseListAdapter(Glide.with(this)).apply {
-            onClickListener = { startActivity(internalIntent.getCheeseDetailIntent(this@CheeseListActivity, it.id, it.name)) }
+            onClickListener = { viewModel.onCheeseSelected(it) }
         }
     }
 
@@ -47,12 +47,19 @@ class CheeseListActivity : AppCompatActivity() {
         setupRecyclerView()
         setupSwipeRefresh()
 
+        setupViewModelObservers()
+    }
+
+    private fun setupViewModelObservers() {
         viewModel.cheeses.observe {
             when (it) {
                 is Resource.Loading -> onLoading(it.data)
                 is Resource.Success -> onSuccess(it.data)
                 is Resource.Error -> onError(it.data)
             }
+        }
+        viewModel.cheeseSelected.observeNotNull {
+            startActivity(internalIntent.getCheeseDetailIntent(this, it.id, it.name))
         }
     }
 
@@ -100,5 +107,13 @@ class CheeseListActivity : AppCompatActivity() {
 
     private inline fun <T> LiveData<T>.observe(crossinline block: (T?) -> Unit) {
         observe(this@CheeseListActivity, Observer { block(it) })
+    }
+
+    private inline fun <T> LiveData<T>.observeNotNull(crossinline block: (T) -> Unit) {
+        observe(this@CheeseListActivity, Observer {
+            if (it != null) {
+                block(it)
+            }
+        })
     }
 }

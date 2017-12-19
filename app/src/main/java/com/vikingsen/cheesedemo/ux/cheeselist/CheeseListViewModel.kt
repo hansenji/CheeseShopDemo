@@ -6,6 +6,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import com.vikingsen.cheesedemo.model.AbsentLiveData
 import com.vikingsen.cheesedemo.model.Resource
+import com.vikingsen.cheesedemo.model.SingleLiveEvent
 import com.vikingsen.cheesedemo.model.data.cheese.CheeseRepository
 import com.vikingsen.cheesedemo.model.database.cheese.Cheese
 import javax.inject.Inject
@@ -18,6 +19,7 @@ class CheeseListViewModel
     private val forceLoad = MutableLiveData<Boolean>()
 
     val cheeses: LiveData<Resource<List<Cheese>>>
+    val cheeseSelected = SingleLiveEvent<Cheese>()
 
     init {
         cheeses = AbsentLiveData.nullSwitchMap(forceLoad) {
@@ -28,5 +30,9 @@ class CheeseListViewModel
 
     fun forceLoad() {
         forceLoad.value = true
+    }
+
+    fun onCheeseSelected(cheese: Cheese) {
+        cheeseSelected.value = cheese
     }
 }
