@@ -36,6 +36,10 @@ android {
 
         multiDexEnabled true
 
+        dataBinding {
+            enabled = true
+        }
+
         buildConfigField "String", "USER_AGENT_APP_NAME", "\"CheeseDemo-Android\""
         buildConfigField "String", "SERVICE_BASE_URL", "\"http://10.0.2.2:8080/\""
         buildConfigField "String", "IMAGE_BASE_URL", "\"http://10.0.2.2:8080\""
@@ -137,7 +141,6 @@ dependencies {
 
     // Code
     implementation 'com.jakewharton.threetenabp:threetenabp:1.1.0'
-    implementation 'com.devbrackets.android:recyclerext:3.0.1'
     implementation "com.jakewharton.timber:timber:4.7.1"
     implementation 'com.evernote:android-job:1.2.6'
 

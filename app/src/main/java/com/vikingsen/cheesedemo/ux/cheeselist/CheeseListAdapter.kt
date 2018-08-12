@@ -1,54 +1,36 @@
 package com.vikingsen.cheesedemo.ux.cheeselist
 
-
-import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
+import android.support.v7.recyclerview.extensions.ListAdapter
+import android.support.v7.util.DiffUtil
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import com.bumptech.glide.RequestManager
-import com.bumptech.glide.request.RequestOptions
-import com.devbrackets.android.recyclerext.adapter.viewholder.ClickableViewHolder
-import com.vikingsen.cheesedemo.BuildConfig
 import com.vikingsen.cheesedemo.R
+import com.vikingsen.cheesedemo.databinding.CheeseItemBinding
 import com.vikingsen.cheesedemo.model.database.cheese.Cheese
-import kotlinx.android.synthetic.main.item_cheese.view.*
-import java.util.ArrayList
+import com.vikingsen.cheesedemo.ui.recycler.BindingViewHolder
+import com.vikingsen.cheesedemo.ux.cheeselist.CheeseListAdapter.CheeseViewHolder
 
-internal class CheeseListAdapter(private val glideRequestManager: RequestManager) : RecyclerView.Adapter<CheeseListAdapter.CheeseViewHolder>() {
-
-    var onClickListener: (Cheese) -> Unit = {}
-    var cheeses: List<Cheese> = ArrayList()
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
+internal class CheeseListAdapter(private val viewModel: CheeseListViewModel) : ListAdapter<Cheese, CheeseViewHolder>(CheeseDiffUtil()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CheeseViewHolder {
         val cheeseViewHolder = CheeseViewHolder(parent)
-        cheeseViewHolder.setOnClickListener { viewHolder ->
-            onClickListener(cheeses[viewHolder.adapterPosition])
-        }
+        cheeseViewHolder.binding.viewModel = viewModel
         return cheeseViewHolder
     }
 
     override fun onBindViewHolder(holder: CheeseViewHolder, position: Int) {
-        val cheese = cheeses[position]
-        holder.icTextView.text = cheese.name
-        holder.icImageView.contentDescription = cheese.name
-
-        glideRequestManager.load(BuildConfig.IMAGE_BASE_URL + cheese.imageUrl)
-                .apply(RequestOptions()
-                        .centerCrop()
-                        .error(R.drawable.ic_broken_image_white_48dp)
-                )
-                .into(holder.icImageView)
+        holder.binding.cheese = getItem(position)
     }
 
-    override fun getItemCount(): Int = cheeses.size
+    internal class CheeseViewHolder(parent: ViewGroup) : BindingViewHolder<CheeseItemBinding>(R.layout.cheese_item, parent)
 
-    internal class CheeseViewHolder(parent: ViewGroup) : ClickableViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_cheese, parent, false)) {
-        var icImageView: ImageView = itemView.icImageView
-        var icTextView: TextView = itemView.icTextView
+    private class CheeseDiffUtil: DiffUtil.ItemCallback<Cheese>() {
+        override fun areItemsTheSame(oldItem: Cheese?, newItem: Cheese?): Boolean {
+            return oldItem?.id == newItem?.id
+        }
+
+        override fun areContentsTheSame(oldItem: Cheese?, newItem: Cheese?): Boolean {
+            return oldItem?.name == newItem?.name && oldItem?.imageUrl == newItem?.imageUrl
+        }
+
     }
 }

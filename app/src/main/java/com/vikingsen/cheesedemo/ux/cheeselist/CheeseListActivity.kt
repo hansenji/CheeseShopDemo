@@ -4,17 +4,17 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
-import com.bumptech.glide.Glide
-import com.devbrackets.android.recyclerext.layoutmanager.AutoColumnGridLayoutManager
 import com.vikingsen.cheesedemo.R
+import com.vikingsen.cheesedemo.databinding.CheeseListActivityBinding
 import com.vikingsen.cheesedemo.inject.Injector
 import com.vikingsen.cheesedemo.intent.InternalIntent
 import com.vikingsen.cheesedemo.model.Resource
 import com.vikingsen.cheesedemo.model.database.cheese.Cheese
-import kotlinx.android.synthetic.main.activity_cheese_list.*
+import com.vikingsen.cheesedemo.ui.util.SpaceItemDecoration
 import javax.inject.Inject
 
 
@@ -26,11 +26,8 @@ class CheeseListActivity : AppCompatActivity() {
     lateinit var internalIntent: InternalIntent
 
     private val viewModel by lazy { ViewModelProviders.of(this, viewModelFactory).get(CheeseListViewModel::class.java) }
-    private val adapter by lazy {
-        CheeseListAdapter(Glide.with(this)).apply {
-            onClickListener = { viewModel.onCheeseSelected(it) }
-        }
-    }
+    private val adapter by lazy { CheeseListAdapter(viewModel) }
+    private lateinit var binding: CheeseListActivityBinding
 
     init {
         Injector.get().inject(this)
@@ -38,10 +35,9 @@ class CheeseListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = DataBindingUtil.setContentView(this, R.layout.cheese_list_activity)
 
-        setContentView(R.layout.activity_cheese_list)
-
-        setSupportActionBar(clToolbar)
+        setSupportActionBar(binding.toolbar)
         setTitle(R.string.cheese_shop)
 
         setupRecyclerView()
@@ -64,43 +60,41 @@ class CheeseListActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        clRecyclerView.adapter = adapter
-
-        val layoutManager = AutoColumnGridLayoutManager(this, resources.getDimensionPixelSize(R.dimen.grid_item_width))
-        layoutManager.setMinColumnSpacing(resources.getDimensionPixelSize(R.dimen.grid_space))
-        layoutManager.setMatchRowAndColumnSpacing(true)
-        layoutManager.setSpacingMethod(AutoColumnGridLayoutManager.SpacingMethod.EDGES)
-        clRecyclerView.layoutManager = layoutManager
+        val recyclerView = binding.recyclerView
+        recyclerView.adapter = adapter
+        recyclerView.addItemDecoration(SpaceItemDecoration(recyclerView.context, R.dimen.grid_space))
     }
 
     private fun setupSwipeRefresh() {
-        clSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorAccent, R.color.colorPrimaryDark)
-        clSwipeRefreshLayout.setOnRefreshListener { viewModel.forceLoad() }
+        binding.swipeRefreshLayout.apply {
+            setColorSchemeResources(R.color.colorPrimary, R.color.colorAccent, R.color.colorPrimaryDark)
+            setOnRefreshListener { viewModel.forceLoad() }
+        }
     }
 
     private fun onLoading(cheeses: List<Cheese>?) {
-        clSwipeRefreshLayout.isRefreshing = true
+        binding.swipeRefreshLayout.isRefreshing = true
         cheeses?.let {
-            adapter.cheeses = it
+            adapter.submitList(cheeses)
         }
     }
 
     private fun onSuccess(cheeses: List<Cheese>?) {
-        clSwipeRefreshLayout.isRefreshing = false
+        binding.swipeRefreshLayout.isRefreshing = false
         cheeses ?: return onError()
         if (cheeses.isEmpty() && adapter.itemCount > 0) {
             onError()
         } else {
-            adapter.cheeses = cheeses
+            adapter.submitList(cheeses)
         }
     }
 
     private fun onError(cheeses: List<Cheese>? = null) {
-        clSwipeRefreshLayout.isRefreshing = false
+        binding.swipeRefreshLayout.isRefreshing = false
         cheeses?.let {
-            adapter.cheeses = it
+            adapter.submitList(cheeses)
         }
-        Snackbar.make(clCoordinatorLayout, R.string.failed_to_refresh_cheeses, Snackbar.LENGTH_INDEFINITE)
+        Snackbar.make(binding.coordinatorLayout, R.string.failed_to_refresh_cheeses, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.retry) { viewModel.forceLoad() }
                 .show()
     }

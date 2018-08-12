@@ -32,7 +32,7 @@ class CheeseListViewModel
         forceLoad.value = true
     }
 
-    fun onCheeseSelected(cheese: Cheese) {
+    fun onCheeseClicked(cheese: Cheese) {
         cheeseSelected.value = cheese
     }
 }
