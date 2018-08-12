@@ -2,7 +2,7 @@ package com.vikingsen.cheesedemo.model.data.cheese
 
 
 import android.arch.lifecycle.LiveData
-import com.vikingsen.cheesedemo.model.database.ShopDatabaseManager
+import com.vikingsen.cheesedemo.model.database.ShopDatabaseWrapper
 import com.vikingsen.cheesedemo.model.database.cheese.Cheese
 import com.vikingsen.cheesedemo.model.webservice.dto.CheeseDto
 import org.threeten.bp.LocalDateTime
@@ -12,11 +12,11 @@ import javax.inject.Singleton
 @Singleton
 class CheeseLocalDataSource
 @Inject constructor(
-        private val shopDatabaseManager: ShopDatabaseManager
+        private val shopDatabaseWrapper: ShopDatabaseWrapper
 ) {
-    fun getCheeses(): LiveData<List<Cheese>> = shopDatabaseManager.getCheeseDao().findAll()
+    fun getCheeses(): LiveData<List<Cheese>> = shopDatabaseWrapper.getCheeseDao().findAll()
 
-    fun getCheese(cheeseId: Long): LiveData<Cheese> = shopDatabaseManager.getCheeseDao().findById(cheeseId)
+    fun getCheese(cheeseId: Long): LiveData<Cheese> = shopDatabaseWrapper.getCheeseDao().findById(cheeseId)
 
     fun saveCheeses(cheeseDtos: List<CheeseDto>): List<Cheese> {
         val cached = LocalDateTime.now()
@@ -29,8 +29,8 @@ class CheeseLocalDataSource
                 this.cached = cached
             }
         }
-        shopDatabaseManager.getDatabase().runInTransaction {
-            val cheeseDao = shopDatabaseManager.getCheeseDao()
+        shopDatabaseWrapper.getDatabase().runInTransaction {
+            val cheeseDao = shopDatabaseWrapper.getCheeseDao()
             if (cheeses.isNotEmpty()) {
                 cheeseDao.deleteAll()
             }
@@ -46,7 +46,7 @@ class CheeseLocalDataSource
         cheese.description = dto.description
         cheese.imageUrl = dto.image
         cheese.cached = LocalDateTime.now()
-        shopDatabaseManager.getCheeseDao().insert(cheese)
+        shopDatabaseWrapper.getCheeseDao().insert(cheese)
         return cheese
     }
 }

@@ -1,17 +1,18 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlinVersion = '1.2.0'
+    ext.kotlinVersion = '1.2.60'
 
     repositories {
         mavenCentral()
         jcenter()
         maven { url 'https://maven.google.com' }
         mavenLocal()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0' // version plugin support
+        classpath 'com.android.tools.build:gradle:3.2.0-beta05'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.20.0' // version plugin support
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlinVersion"
 
@@ -33,17 +34,17 @@ allprojects {
 
 ext {
     // versions for libraries that multiple dependencies
-    supportLibVersion = '27.0.2'
+    supportLibVersion = '27.1.1'
     daggerVersion = '2.13'
     okhttpVersion = '3.9.0'
     pocketKnifeVersion = '3.2.1'
     pocketBusVersion = '1.2.0'
     jacksonVersion = '2.9.2'
-    materialDialogs = '0.9.5.0'
+    materialDialogs = '0.9.6.0'
     butterKnifeVersion = '8.5.1'
-    lifecycleVersion = '1.0.0'
-    roomVersion = '1.0.0'
-    dbtoolsRoomVersion = '1.2.0'
+    lifecycleVersion = '1.1.1'
+    roomVersion = '1.1.1'
+    dbtoolsRoomVersion = '2.4.0'
     glideVersion = '4.3.1'
 }
 

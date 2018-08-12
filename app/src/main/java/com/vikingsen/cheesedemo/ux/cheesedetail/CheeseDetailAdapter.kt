@@ -1,13 +1,11 @@
 package com.vikingsen.cheesedemo.ux.cheesedetail
 
-
 import android.support.annotation.ColorInt
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.devbrackets.android.recyclerext.adapter.RecyclerHeaderAdapter
 import com.vikingsen.cheesedemo.R
 import com.vikingsen.cheesedemo.model.data.price.Price
 import com.vikingsen.cheesedemo.model.database.cheese.Cheese
@@ -21,8 +19,7 @@ import org.threeten.bp.format.FormatStyle
 import java.util.ArrayList
 import java.util.Locale
 
-class CheeseDetailAdapter : RecyclerHeaderAdapter<CheeseDetailAdapter.HeaderViewHolder, RecyclerView.ViewHolder>() {
-
+class CheeseDetailAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var cheese: Cheese? = null
         set(value) {
@@ -45,57 +42,25 @@ class CheeseDetailAdapter : RecyclerHeaderAdapter<CheeseDetailAdapter.HeaderView
             notifyDataSetChanged()
         }
 
-    override fun onCreateHeaderViewHolder(parent: ViewGroup, viewType: Int) = HeaderViewHolder(parent)
 
-    override fun onCreateChildViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder = when (viewType) {
-        TYPE_PRICE -> PriceViewHolder(parent)
-        TYPE_DESCRIPTION -> DescriptionViewHolder(parent)
-        TYPE_COMMENT -> CommentViewHolder(parent)
-        else -> throw IllegalArgumentException("Invalid type " + viewType)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            TYPE_PRICE -> PriceViewHolder(parent)
+            TYPE_DESCRIPTION -> DescriptionViewHolder(parent)
+            TYPE_COMMENT_HEADER -> HeaderViewHolder(parent)
+            TYPE_COMMENT -> CommentViewHolder(parent)
+            else -> throw IllegalArgumentException("Invalid type $viewType")
+        }
     }
 
-    override fun onBindHeaderViewHolder(holder: HeaderViewHolder, firstChildPosition: Int) {
-        holder.headerTextView.setText(R.string.comments)
-    }
-
-    override fun onBindChildViewHolder(holder: RecyclerView.ViewHolder, childPosition: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is PriceViewHolder -> bindPriceViewHolder(holder)
             is DescriptionViewHolder -> bindDescriptionViewHolder(holder)
-            is CommentViewHolder -> bindCommentViewHolder(holder, childPosition - POSITION_FIRST_COMMENT)
+            is HeaderViewHolder -> holder.headerTextView.setText(R.string.comments)
+            is CommentViewHolder -> bindCommentViewHolder(holder, position - POSITION_FIRST_COMMENT)
         }
     }
-
-    override fun getChildCount(): Int {
-        if (cheese == null) {
-            return 0
-        }
-        var count = 2
-        if (comments.isEmpty()) {
-            count++
-        }
-        return count + comments.size
-    }
-
-    override fun getHeaderId(childPosition: Int): Long {
-        if (childPosition >= POSITION_FIRST_COMMENT) {
-            return COMMENT_HEADER_ID
-        }
-        return RecyclerView.NO_ID
-    }
-
-    override fun getChildViewType(childPosition: Int): Int = when (childPosition) {
-        POSITION_PRICE -> TYPE_PRICE
-        POSITION_DESCRIPTION -> TYPE_DESCRIPTION
-        else -> TYPE_COMMENT
-    }
-
-    val commentCount: Int
-        get() = comments.size
-
-    fun hasCheese(): Boolean = cheese != null
-
-    fun hasPrice(): Boolean = price != null
 
     private fun bindPriceViewHolder(holder: PriceViewHolder) {
         val price = this.price
@@ -133,6 +98,34 @@ class CheeseDetailAdapter : RecyclerHeaderAdapter<CheeseDetailAdapter.HeaderView
         return date.format(FORMATTER)
     }
 
+
+    override fun getItemCount(): Int {
+        if (cheese == null) {
+            return 0
+        }
+        var count = 3 // Description, Price, and Comment Header
+        if (comments.isEmpty()) {
+            count++
+        }
+        return count + comments.size
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (position) {
+            POSITION_PRICE -> TYPE_PRICE
+            POSITION_DESCRIPTION -> TYPE_DESCRIPTION
+            POSITION_COMMENT_HEADER -> TYPE_COMMENT_HEADER
+            else -> TYPE_COMMENT
+        }
+    }
+
+    val commentCount: Int
+        get() = comments.size
+
+    fun hasCheese() = cheese != null
+
+    fun hasPrice() = price != null
+
     internal class PriceViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_price, parent, false)) {
         val priceTextView: TextView = itemView.priceTextView
     }
@@ -147,21 +140,21 @@ class CheeseDetailAdapter : RecyclerHeaderAdapter<CheeseDetailAdapter.HeaderView
         val dateTextView: TextView = itemView.dateTextView
     }
 
-    class HeaderViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_header, parent, false)) {
+    internal class HeaderViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_header, parent, false)) {
         val headerTextView: TextView = itemView.headerTextView
     }
 
     companion object {
 
-        private val COMMENT_HEADER_ID: Long = 1
+        private const val POSITION_PRICE = 0
+        private const val POSITION_DESCRIPTION = 1
+        private const val POSITION_COMMENT_HEADER = 2
+        private const val POSITION_FIRST_COMMENT = 3
 
-        private val POSITION_PRICE = 0
-        private val POSITION_DESCRIPTION = 1
-        private val POSITION_FIRST_COMMENT = 2
-
-        private val TYPE_PRICE = 1
-        private val TYPE_DESCRIPTION = 2
-        private val TYPE_COMMENT = 3
+        private const val TYPE_PRICE = 1
+        private const val TYPE_DESCRIPTION = 2
+        private const val TYPE_COMMENT_HEADER = 3
+        private const val TYPE_COMMENT = 4
 
         private val FORMATTER = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
     }
