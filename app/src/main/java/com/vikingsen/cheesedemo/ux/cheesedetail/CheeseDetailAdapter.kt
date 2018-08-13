@@ -1,21 +1,16 @@
 package com.vikingsen.cheesedemo.ux.cheesedetail
 
-import android.support.annotation.ColorInt
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import com.vikingsen.cheesedemo.R
+import com.vikingsen.cheesedemo.databinding.CommentItemBinding
+import com.vikingsen.cheesedemo.databinding.DescriptionItemBinding
+import com.vikingsen.cheesedemo.databinding.HeaderItemBinding
+import com.vikingsen.cheesedemo.databinding.PriceItemBinding
 import com.vikingsen.cheesedemo.model.data.price.Price
 import com.vikingsen.cheesedemo.model.database.cheese.Cheese
 import com.vikingsen.cheesedemo.model.database.comment.Comment
-import kotlinx.android.synthetic.main.item_comment.view.*
-import kotlinx.android.synthetic.main.item_description.view.*
-import kotlinx.android.synthetic.main.item_header.view.*
-import kotlinx.android.synthetic.main.item_price.view.*
-import org.threeten.bp.format.DateTimeFormatter
-import org.threeten.bp.format.FormatStyle
+import com.vikingsen.cheesedemo.ui.recycler.BindingViewHolder
 import java.util.ArrayList
 import java.util.Locale
 
@@ -57,47 +52,31 @@ class CheeseDetailAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         when (holder) {
             is PriceViewHolder -> bindPriceViewHolder(holder)
             is DescriptionViewHolder -> bindDescriptionViewHolder(holder)
-            is HeaderViewHolder -> holder.headerTextView.setText(R.string.comments)
+            is HeaderViewHolder -> bindHeaderViewHolder(holder)
             is CommentViewHolder -> bindCommentViewHolder(holder, position - POSITION_FIRST_COMMENT)
         }
     }
 
     private fun bindPriceViewHolder(holder: PriceViewHolder) {
         val price = this.price
-        when {
-            isLoadingPrice -> holder.priceTextView.setText(R.string.fetching_price)
-            price != null -> holder.priceTextView.text = String.format(Locale.getDefault(), "$%.2f", price.price)
-            else -> holder.priceTextView.setText(R.string.price_unavailable)
+        holder.binding.price = when {
+            isLoadingPrice -> holder.binding.root.context.getString(R.string.fetching_price)
+            price != null -> String.format(Locale.getDefault(), "$%.2f", price.price)
+            else -> holder.binding.root.context.getString(R.string.price_unavailable)
         }
     }
 
     private fun bindDescriptionViewHolder(holder: DescriptionViewHolder) {
-        cheese?.let {
-            holder.descriptionTextView.text = it.description
-        }
+        holder.binding.cheese = cheese
+    }
+
+    private fun bindHeaderViewHolder(holder: HeaderViewHolder) {
+        holder.binding.headerText = holder.binding.root.context.getString(R.string.comments)
     }
 
     private fun bindCommentViewHolder(holder: CommentViewHolder, position: Int) {
-        if (position < 0 || position >= comments.size) {
-            holder.itemView.visibility = View.INVISIBLE
-            return
-        }
-        val comment = comments[position]
-        holder.itemView.visibility = View.VISIBLE
-        holder.commentTextView.text = comment.comment
-        holder.commentTextView.setTextColor(getTextColor(comment.synced))
-        holder.userTextView.text = comment.user
-        holder.dateTextView.text = getDateText(comment)
+        holder.binding.comment = comments.getOrNull(position)
     }
-
-    @ColorInt
-    private fun getTextColor(syncedWithServer: Boolean): Int = if (syncedWithServer) 0xde000000.toInt() else 0x8a000000.toInt()
-
-    private fun getDateText(comment: Comment): String {
-        val date = comment.created
-        return date.format(FORMATTER)
-    }
-
 
     override fun getItemCount(): Int {
         if (cheese == null) {
@@ -126,26 +105,15 @@ class CheeseDetailAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     fun hasPrice() = price != null
 
-    internal class PriceViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_price, parent, false)) {
-        val priceTextView: TextView = itemView.priceTextView
-    }
+    internal class PriceViewHolder(parent: ViewGroup) : BindingViewHolder<PriceItemBinding>(R.layout.price_item, parent)
 
-    internal class DescriptionViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_description, parent, false)) {
-        val descriptionTextView: TextView = itemView.descriptionTextView
-    }
+    internal class DescriptionViewHolder(parent: ViewGroup) : BindingViewHolder<DescriptionItemBinding>(R.layout.description_item, parent)
 
-    internal class CommentViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_comment, parent, false)) {
-        val commentTextView: TextView = itemView.commentTextView
-        val userTextView: TextView = itemView.userTextView
-        val dateTextView: TextView = itemView.dateTextView
-    }
+    internal class CommentViewHolder(parent: ViewGroup) : BindingViewHolder<CommentItemBinding>(R.layout.comment_item, parent)
 
-    internal class HeaderViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_header, parent, false)) {
-        val headerTextView: TextView = itemView.headerTextView
-    }
+    internal class HeaderViewHolder(parent: ViewGroup) : BindingViewHolder<HeaderItemBinding>(R.layout.header_item, parent)
 
     companion object {
-
         private const val POSITION_PRICE = 0
         private const val POSITION_DESCRIPTION = 1
         private const val POSITION_COMMENT_HEADER = 2
@@ -155,7 +123,5 @@ class CheeseDetailAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private const val TYPE_DESCRIPTION = 2
         private const val TYPE_COMMENT_HEADER = 3
         private const val TYPE_COMMENT = 4
-
-        private val FORMATTER = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
     }
 }

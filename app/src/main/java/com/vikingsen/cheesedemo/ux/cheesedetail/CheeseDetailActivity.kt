@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
@@ -11,17 +12,15 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.vikingsen.cheesedemo.BuildConfig
 import com.vikingsen.cheesedemo.R
+import com.vikingsen.cheesedemo.databinding.CheeseDetailActivityBinding
 import com.vikingsen.cheesedemo.inject.Injector
 import com.vikingsen.cheesedemo.model.Resource
 import com.vikingsen.cheesedemo.model.data.price.Price
 import com.vikingsen.cheesedemo.model.database.cheese.Cheese
 import com.vikingsen.cheesedemo.model.database.comment.Comment
 import com.vikingsen.cheesedemo.util.DrawableUtil
-import kotlinx.android.synthetic.main.activity_cheese_detail.*
 import pocketknife.BindExtra
 import pocketknife.PocketKnife
 import javax.inject.Inject
@@ -42,19 +41,21 @@ class CheeseDetailActivity : AppCompatActivity(), AddCommentDialogFragment.OnTex
     private val viewModel by lazy { ViewModelProviders.of(this, viewModelFactory).get(CheeseDetailViewModel::class.java) }
     private var commentMenuItem: MenuItem? = null
 
+    private lateinit var binding: CheeseDetailActivityBinding
+
     init {
         Injector.get().inject(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_cheese_detail)
+        binding = DataBindingUtil.setContentView(this, R.layout.cheese_detail_activity)
         PocketKnife.bindExtras(this)
 
-        setSupportActionBar(cdToolbar)
+        setSupportActionBar(binding.toolbar)
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
-        cdCollapsingToolbar.title = cheeseName
+        binding.collapsingToolbar.title = cheeseName
 
         setupRecyclerView()
         setupFab()
@@ -120,27 +121,21 @@ class CheeseDetailActivity : AppCompatActivity(), AddCommentDialogFragment.OnTex
     }
 
     private fun setupRecyclerView() {
-        cdRecyclerView.adapter = adapter
-        cdRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
     }
 
     private fun setupFab() {
-        cdFab.setOnClickListener { Snackbar.make(cdCoordinatorLayout, R.string.thank_you_for_purchase, Snackbar.LENGTH_SHORT).show() }
+        binding.fab.setOnClickListener { Snackbar.make(binding.coordinatorLayout, R.string.thank_you_for_purchase, Snackbar.LENGTH_SHORT).show() }
         updateFabVisibility()
     }
 
     private fun updateFabVisibility() {
         if (!adapter.isLoadingPrice && adapter.hasPrice()) {
-            cdFab.show()
+            binding.fab.show()
         } else {
-            cdFab.hide()
+            binding.fab.hide()
         }
-    }
-
-    private fun loadBackdrop(imageUrl: String) {
-        Glide.with(this).load(BuildConfig.IMAGE_BASE_URL + imageUrl)
-                .apply(RequestOptions.centerCropTransform())
-                .into(cdBackdropImageView)
     }
 
     private fun showNewCommentDialog() {
@@ -152,7 +147,7 @@ class CheeseDetailActivity : AppCompatActivity(), AddCommentDialogFragment.OnTex
     private fun onCheeseSuccess(resource: Resource.Success<Cheese>) {
         val cheese = resource.data ?: return showMissingCheese()
         adapter.cheese = cheese
-        loadBackdrop(cheese.imageUrl)
+        binding.cheese = cheese
         invalidateOptionsMenu()
     }
 
@@ -160,7 +155,7 @@ class CheeseDetailActivity : AppCompatActivity(), AddCommentDialogFragment.OnTex
         resource.data?.let {
             adapter.cheese = it
         }
-        Snackbar.make(cdCoordinatorLayout, R.string.failed_to_load_cheese, Snackbar.LENGTH_INDEFINITE)
+        Snackbar.make(binding.coordinatorLayout, R.string.failed_to_load_cheese, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.retry) { viewModel.reload() }
                 .show()
         invalidateOptionsMenu()
@@ -168,7 +163,7 @@ class CheeseDetailActivity : AppCompatActivity(), AddCommentDialogFragment.OnTex
     }
 
     private fun showMissingCheese() {
-        Snackbar.make(cdCoordinatorLayout, R.string.unable_to_find_cheese, Snackbar.LENGTH_INDEFINITE).show()
+        Snackbar.make(binding.coordinatorLayout, R.string.unable_to_find_cheese, Snackbar.LENGTH_INDEFINITE).show()
         updateFabVisibility()
         invalidateOptionsMenu()
     }
