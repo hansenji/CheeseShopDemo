@@ -9,9 +9,13 @@ import com.vikingsen.cheesedemo.model.database.comment.Comment
 import com.vikingsen.cheesedemo.model.database.comment.CommentDao
 
 
-@Database(entities = arrayOf(
+@Database(
+    entities = [
         Cheese::class,
-        Comment::class), version = 1)
+        Comment::class
+    ],
+    version = 2
+)
 @TypeConverters(LocalDateTimeConverter::class)
 abstract class ShopDatabase : RoomDatabase() {
 

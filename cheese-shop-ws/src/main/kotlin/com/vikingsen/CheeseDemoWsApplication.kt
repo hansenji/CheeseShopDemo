@@ -38,8 +38,8 @@ class CheeseDemoWsApplication {
 
         return CommandLineRunner {
             val cheeses = ObjectMapper().readValue(javaClass.classLoader.getResource("cheese.json"), CheesesDto::class.java).cheese
-            cheeses.forEach { (name, image) ->
-                val cheese = cheeseRepository.save(Cheese(name = name, image = "/images/$image", description = lorem.getParagraphs(1, 1)))
+            cheeses.forEach { (name, image, order) ->
+                val cheese = cheeseRepository.save(Cheese(name = name, image = "/images/$image", description = lorem.getParagraphs(1, 1), sort = order))
                 priceRepository.save(Price(cheeseId = cheese.id, price = getPrice()))
                 for (i in 1..getNumComments()) {
                     commentRepository.save(genComment(cheese, i))

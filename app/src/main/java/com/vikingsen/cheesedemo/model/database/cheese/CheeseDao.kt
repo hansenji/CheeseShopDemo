@@ -22,6 +22,6 @@ interface CheeseDao  {
     @Query("SELECT * FROM cheese WHERE id = :id")
     fun findById(id: Long): LiveData<Cheese>
 
-    @Query("SELECT * FROM cheese ORDER BY name")
+    @Query("SELECT * FROM cheese ORDER BY sort ASC, name ASC")
     fun findAll(): LiveData<List<Cheese>>
 }

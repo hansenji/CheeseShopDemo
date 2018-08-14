@@ -20,12 +20,13 @@ class CheeseLocalDataSource
 
     fun saveCheeses(cheeseDtos: List<CheeseDto>): List<Cheese> {
         val cached = LocalDateTime.now()
-        val cheeses = cheeseDtos.map { (id, name, image, description) ->
+        val cheeses = cheeseDtos.map { (id, name, image, description, sort) ->
             Cheese().apply {
                 this.id = id
                 this.name = name
                 this.description = description
                 this.imageUrl = image
+                this.sort = sort
                 this.cached = cached
             }
         }
@@ -45,6 +46,7 @@ class CheeseLocalDataSource
         cheese.name = dto.name
         cheese.description = dto.description
         cheese.imageUrl = dto.image
+        cheese.sort = dto.sort
         cheese.cached = LocalDateTime.now()
         shopDatabaseWrapper.getCheeseDao().insert(cheese)
         return cheese

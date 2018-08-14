@@ -17,6 +17,7 @@ class ShopDatabaseWrapper
     override fun createDatabase(): ShopDatabase {
         return Room.databaseBuilder(application, ShopDatabase::class.java, ShopDatabase.DATABASE_NAME)
                 .openHelperFactory(SqliteOrgSQLiteOpenHelperFactory())
+            // TODO: 8/13/18 ADD V2 MIGRATION AND TESTS
                 .fallbackToDestructiveMigration()
                 .build()
     }

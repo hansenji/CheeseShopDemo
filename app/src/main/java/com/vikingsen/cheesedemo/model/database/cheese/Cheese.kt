@@ -14,7 +14,7 @@ class Cheese  {
     var name = ""
     var description = ""
     var imageUrl = ""
+    var sort = -1
     var cached: LocalDateTime = LocalDateTime.now()
-
 
 }

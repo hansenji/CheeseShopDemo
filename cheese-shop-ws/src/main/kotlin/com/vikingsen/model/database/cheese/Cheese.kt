@@ -12,6 +12,7 @@ data class Cheese(
         var image: String = "",
         @Column(length = 2048)
         var description: String = "",
+        var sort: Int = 0,
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
         var id: Long = 0
 )

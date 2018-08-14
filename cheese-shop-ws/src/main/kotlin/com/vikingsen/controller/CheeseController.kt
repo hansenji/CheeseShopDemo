@@ -18,12 +18,11 @@ import javax.servlet.http.HttpServletRequest
 class CheeseController(val cheeseRepository: CheeseRepository) {
     @GetMapping()
     fun findAll(): List<Cheese> {
-        return cheeseRepository.findAllByOrderByNameAsc()
+        return cheeseRepository.findAllByOrderBySortAscNameAsc()
     }
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: Long): Cheese {
-//        return cheeseRepository.findOne(id).orElse(null) ?: throw CheeseNotFoundException()
         return cheeseRepository.findOne(id) ?: throw CheeseNotFoundException()
     }
 
