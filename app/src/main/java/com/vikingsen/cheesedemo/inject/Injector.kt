@@ -7,6 +7,7 @@ object Injector {
     private lateinit var appComponent: AppComponent
 
     @JvmStatic
+    @Synchronized
     fun init(application: Application) {
         appComponent = DaggerAppComponent.builder()
                 .appModule(AppModule(application))
@@ -14,5 +15,6 @@ object Injector {
     }
 
     @JvmStatic
+    @Synchronized
     fun get(): AppComponent = appComponent
 }

@@ -10,6 +10,7 @@ import com.vikingsen.cheesedemo.util.CoroutineContextProvider.MainCoroutineConte
 import com.vikingsen.cheesedemo.ux.ViewModelModule
 import dagger.Module
 import dagger.Provides
+import dagger.Reusable
 import javax.inject.Singleton
 
 @Module(includes = [ViewModelModule::class])
@@ -20,15 +21,15 @@ class AppModule(private val application: Application) {
     fun provideApplication(): Application = application
 
     @Provides
-    @Singleton
+    @Reusable
     fun provideSharedPreferences(application: Application): SharedPreferences = PreferenceManager.getDefaultSharedPreferences(application)
 
     @Provides
-    @Singleton
+    @Reusable
     fun provideConnectivityManager(application: Application) = application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     @Provides
-    @Singleton
+    @Reusable
     fun provideCoroutineContextProvider(): CoroutineContextProvider = MainCoroutineContextProvider
 
 }
