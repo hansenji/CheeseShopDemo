@@ -1,4 +1,4 @@
-package com.vikingsen.cheesedemo.ux
+package com.vikingsen.cheesedemo.inject
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider

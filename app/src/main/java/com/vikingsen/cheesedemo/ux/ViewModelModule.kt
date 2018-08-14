@@ -2,6 +2,7 @@ package com.vikingsen.cheesedemo.ux
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
+import com.vikingsen.cheesedemo.inject.ViewModelFactory
 import com.vikingsen.cheesedemo.inject.ViewModelKey
 import com.vikingsen.cheesedemo.ux.cheesedetail.CheeseDetailViewModel
 import com.vikingsen.cheesedemo.ux.cheeselist.CheeseListViewModel
