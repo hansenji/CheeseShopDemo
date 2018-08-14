@@ -8,7 +8,7 @@ import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = arrayOf(AppModule::class, WebServiceModule::class))
+@Component(modules = [AppModule::class, WebServiceModule::class])
 interface AppComponent {
     fun inject(target: App)
     fun inject(target: CheeseListActivity)
