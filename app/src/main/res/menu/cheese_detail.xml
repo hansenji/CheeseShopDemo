@@ -2,14 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menu_item_comment"
+        android:id="@+id/new_comment"
+        android:title="@string/new_comment"
         android:icon="@drawable/ic_insert_comment_black_24dp"
-        android:title="@string/add_comment"
-        app:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/menu_item_refresh"
-        android:icon="@drawable/ic_refresh_black_24dp"
-        android:title="@string/refresh"
         app:showAsAction="ifRoom"
         />
 </menu>

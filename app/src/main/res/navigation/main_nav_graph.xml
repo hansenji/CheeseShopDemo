@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/main_nav_graph"
+            app:startDestination="@id/cheeseListFragment">
+
+    <fragment
+        android:id="@+id/cheeseListFragment"
+        android:name="com.vikingsen.cheesedemo.ux.cheeselist.CheeseListFragment"
+        android:label="@string/cheese_shop" >
+        <action
+            android:id="@+id/action_cheeseListFragment_to_cheeseDetailFragment"
+            app:destination="@id/cheeseDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/cheeseDetailFragment"
+        android:name="com.vikingsen.cheesedemo.ux.cheesedetail.CheeseDetailFragment"
+        android:label="{name}"
+        >
+        <argument
+            android:name="id"
+            app:argType="long" />
+        <argument
+            android:name="name"
+            app:argType="string"
+            />
+    </fragment>
+</navigation>

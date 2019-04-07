@@ -12,12 +12,12 @@ class Prefs
 
     val httpLoggingLevel: HttpLoggingInterceptor.Level
         get() {
-            val logLevelAsString = preferences.getString(PREF_HTTP_LOG_LEVEL, HttpLoggingInterceptor.Level.BASIC.name)
+            val logLevelAsString = preferences.getString(PREF_HTTP_LOG_LEVEL, null) ?: return HttpLoggingInterceptor.Level.BASIC
             return HttpLoggingInterceptor.Level.valueOf(logLevelAsString)
         }
 
     companion object {
 
-        private val PREF_HTTP_LOG_LEVEL = "dev_http_log_level"
+        private const val PREF_HTTP_LOG_LEVEL = "dev_http_log_level"
     }
 }

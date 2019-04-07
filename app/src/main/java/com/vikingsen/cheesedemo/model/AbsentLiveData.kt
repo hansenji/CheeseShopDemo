@@ -1,7 +1,7 @@
 package com.vikingsen.cheesedemo.model
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Transformations
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
 
 /**
  * A LiveData class that has `null` value.

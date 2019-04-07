@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="comment"
+            type="com.vikingsen.cheesedemo.model.database.comment.Comment"
+            />
+    </data>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        >
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="@{comment == null ? View.INVISIBLE : View.VISIBLE}"
+        app:cardElevation="2dp"
+        app:cardUseCompatPadding="true"
+        android:background="@android:color/white"
+        >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <TextView
+                android:id="@+id/commentTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@{comment.comment}"
+                android:textColor="@{comment.synced ? 0xde000000 : 0x8a000000}"
+                tools:text="Movetvitae dignissim curae.  Elaboraretsapien felis principes urbanitas agam animal meliore has interpretaris dis imperdiet iusto tacimates atqui sem ceteros tantas.  Aliquetsuavitate vituperata noluisse efficiantur inceptos malesuada morbi tacimates dicat feugiat aliquet risus facilisi intellegat arcu sententiae indoctum fringilla docendi."
+                />
+
+            <TextView
+                android:id="@+id/userTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                app:layout_constraintEnd_toStartOf="@+id/dateTextView"
+                app:layout_constraintTop_toTopOf="@+id/dateTextView"
+                app:layout_constraintBottom_toBottomOf="@+id/dateTextView"
+                android:text="@{comment.user}"
+                tools:text="Fred"
+                />
+
+            <TextView
+                android:id="@+id/dateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/commentTextView"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintVertical_bias="0.0"
+                app:date="@{comment.created}"
+                tools:text="March 31, 2017"
+                />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+    </FrameLayout>
+</layout>

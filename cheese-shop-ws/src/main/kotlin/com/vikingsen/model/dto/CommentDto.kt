@@ -1,7 +1,7 @@
 package com.vikingsen.model.dto
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class CommentDto(
@@ -9,5 +9,5 @@ data class CommentDto(
         val cheeseId: Long,
         val user: String,
         val comment: String,
-        val created: LocalDateTime
+        val created: OffsetDateTime
 )

@@ -5,15 +5,16 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.preference.PreferenceManager
+import androidx.work.WorkManager
+import com.vikingsen.cheesedemo.model.webservice.WebServiceModule
 import com.vikingsen.cheesedemo.util.CoroutineContextProvider
 import com.vikingsen.cheesedemo.util.CoroutineContextProvider.MainCoroutineContextProvider
-import com.vikingsen.cheesedemo.ux.ViewModelModule
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
 import javax.inject.Singleton
 
-@Module(includes = [ViewModelModule::class])
+@Module(includes = [AssistedModule::class, WebServiceModule::class])
 class AppModule(private val application: Application) {
 
     @Provides
@@ -31,5 +32,9 @@ class AppModule(private val application: Application) {
     @Provides
     @Reusable
     fun provideCoroutineContextProvider(): CoroutineContextProvider = MainCoroutineContextProvider
+
+    @Provides
+    @Reusable
+    fun provideWorkManager() = WorkManager.getInstance()
 
 }

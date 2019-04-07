@@ -1,6 +1,6 @@
 package com.vikingsen.cheesedemo.model
 
-import android.support.annotation.StringRes
+import androidx.annotation.StringRes
 
 
 sealed class Resource<out T>(val data: T?) {

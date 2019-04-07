@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <data>
+        <variable
+            name="imageUrl"
+            type="String"
+            />
+    </data>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/detail_image_height"
+        tools:ignore="ContentDescription"
+        app:imageUrl="@{imageUrl}"
+        >
+
+    </ImageView>
+</layout>

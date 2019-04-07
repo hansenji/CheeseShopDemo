@@ -1,20 +1,17 @@
-
 package com.vikingsen.cheesedemo.model.database.cheese
 
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.PrimaryKey
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import org.threeten.bp.LocalDateTime
 
 
 @Entity(tableName = "cheese")
-class Cheese  {
-
+data class Cheese(
     @PrimaryKey
-    var id = 0L
-    var name = ""
-    var description = ""
-    var imageUrl = ""
-    var sort = -1
+    var id: Long = 0L,
+    var name: String = "",
+    var description: String = "",
+    var imageUrl: String = "",
+    var sort: Int = -1,
     var cached: LocalDateTime = LocalDateTime.now()
-
-}
+)

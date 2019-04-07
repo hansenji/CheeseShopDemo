@@ -1,8 +1,12 @@
 package com.vikingsen.cheesedemo.model.webservice.dto
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.ZoneOffset
 
-import org.threeten.bp.LocalDateTime
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class CommentDto(val guid: String, val cheeseId: Long, val user: String, val comment: String, val created: LocalDateTime)
+data class CommentDto(
+    val guid: String,
+    val cheeseId: Long,
+    val user: String,
+    val comment: String,
+    val created: OffsetDateTime = OffsetDateTime.of(1980, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC)
+)

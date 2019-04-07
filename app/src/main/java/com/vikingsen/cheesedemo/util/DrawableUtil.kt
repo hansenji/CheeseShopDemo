@@ -1,10 +1,10 @@
 package com.vikingsen.cheesedemo.util
 
 
-import android.support.annotation.ColorInt
-import android.support.v4.graphics.drawable.DrawableCompat
 import android.view.Menu
 import android.view.MenuItem
+import androidx.annotation.ColorInt
+import androidx.core.graphics.drawable.DrawableCompat
 
 @Suppress("MemberVisibilityCanPrivate")
 object DrawableUtil {

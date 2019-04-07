@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "b67beb573a66747a7e538f875d9c994a",
+    "identityHash": "065cec3d3b76d26b5dc2a3f1a793ed14",
     "entities": [
       {
         "tableName": "cheese",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `description` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `cached` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `description` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `sort` INTEGER NOT NULL, `cached` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -33,58 +33,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "cached",
-            "columnName": "cached",
-            "affinity": "TEXT",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "id"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "comment",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `cheeseId` INTEGER NOT NULL, `user` TEXT NOT NULL, `comment` TEXT NOT NULL, `created` TEXT NOT NULL, `synced` INTEGER NOT NULL, `cached` TEXT, PRIMARY KEY(`id`))",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "cheeseId",
-            "columnName": "cheeseId",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "user",
-            "columnName": "user",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "comment",
-            "columnName": "comment",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "created",
-            "columnName": "created",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "synced",
-            "columnName": "synced",
+            "fieldPath": "sort",
+            "columnName": "sort",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -92,7 +42,7 @@
             "fieldPath": "cached",
             "columnName": "cached",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -105,9 +55,10 @@
         "foreignKeys": []
       }
     ],
+    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"b67beb573a66747a7e538f875d9c994a\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"065cec3d3b76d26b5dc2a3f1a793ed14\")"
     ]
   }
 }

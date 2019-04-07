@@ -1,29 +1,33 @@
 package com.vikingsen.cheesedemo.util
 
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.newSingleThreadContext
-import kotlin.coroutines.experimental.CoroutineContext
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asCoroutineDispatcher
+import java.util.concurrent.Executors
 
 
 @Suppress("unused")
 interface CoroutineContextProvider {
-    val ui: CoroutineContext
-    val commonPool: CoroutineContext
+    val main: CoroutineDispatcher
+    val default: CoroutineDispatcher
+    val io: CoroutineDispatcher
 
     object MainCoroutineContextProvider: CoroutineContextProvider {
-        override val ui = UI
-        override val commonPool = CommonPool
+        override val main = Dispatchers.Main
+        override val default = Dispatchers.Default
+        override val io = Dispatchers.IO
     }
 
     object TestCoroutineContextProvider: CoroutineContextProvider {
-        override val ui = CommonPool
-        override val commonPool = CommonPool
+        override val main = Dispatchers.Default
+        override val default = Dispatchers.Default
+        override val io = Dispatchers.IO
     }
 
     object TestJdbcCoroutineContextProvider: CoroutineContextProvider {
-        private val coroutineContext = newSingleThreadContext("TestJdbcContext")
-        override val ui = coroutineContext
-        override val commonPool = coroutineContext
+        private val coroutineContext = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+        override val main = coroutineContext
+        override val default = coroutineContext
+        override val io = coroutineContext
     }
 }

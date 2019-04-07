@@ -48,7 +48,7 @@ dependencies {
 	compile "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
 
     compile 'com.thedeanda:lorem:2.1'
-	compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.7'
+	compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.8'
 
-	runtime 'com.h2database:h2:1.4.194'
+	runtime 'com.h2database:h2:1.4.197'
 }

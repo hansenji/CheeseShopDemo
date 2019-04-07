@@ -12,8 +12,6 @@ class ReleaseTree : Timber.Tree() {
         else -> true
     }
 
-
-
     @SuppressLint("LogNotTimber")
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         if (message.length < MAX_LOG_LENGTH) {

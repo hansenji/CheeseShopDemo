@@ -1,77 +1,93 @@
 package com.vikingsen.cheesedemo.ux.cheesedetail
 
-import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
+import androidx.annotation.StringRes
+import androidx.databinding.ViewDataBinding
+import androidx.recyclerview.widget.RecyclerView
 import com.vikingsen.cheesedemo.R
-import com.vikingsen.cheesedemo.databinding.CommentItemBinding
-import com.vikingsen.cheesedemo.databinding.DescriptionItemBinding
-import com.vikingsen.cheesedemo.databinding.HeaderItemBinding
-import com.vikingsen.cheesedemo.databinding.PriceItemBinding
-import com.vikingsen.cheesedemo.model.data.price.Price
+import com.vikingsen.cheesedemo.databinding.CheeseCommentHeaderBinding
+import com.vikingsen.cheesedemo.databinding.CheeseCommentItemBinding
+import com.vikingsen.cheesedemo.databinding.CheeseDescriptionItemBinding
+import com.vikingsen.cheesedemo.databinding.CheeseImageItemBinding
+import com.vikingsen.cheesedemo.databinding.CheesePriceItemBinding
 import com.vikingsen.cheesedemo.model.database.cheese.Cheese
 import com.vikingsen.cheesedemo.model.database.comment.Comment
+import com.vikingsen.cheesedemo.model.repository.price.Price
 import com.vikingsen.cheesedemo.ui.recycler.BindingViewHolder
-import java.util.ArrayList
 import java.util.Locale
 
 class CheeseDetailAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var cheese: Cheese? = null
         set(value) {
-            field = value
-            notifyDataSetChanged()
+            if (field != value) {
+                field = value
+                notifyDataSetChanged()
+            }
         }
-    var comments: List<Comment> = ArrayList()
+    var comments: List<Comment> = listOf()
         set(value) {
-            field = value
-            notifyDataSetChanged()
+            if (field != value) {
+                field = value
+                notifyDataSetChanged()
+            }
         }
     var price: Price? = null
         set(value) {
             field = value
             notifyDataSetChanged()
         }
-    var isLoadingPrice = false
+    var isLoadingPrice: Boolean = false
         set(value) {
-            field = value
-            notifyDataSetChanged()
+            if (field != value) {
+                field = value
+                notifyDataSetChanged()
+            }
         }
 
+    fun hasPrice() = price != null
+    val commentCount: Int get() = comments.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            TYPE_PRICE -> PriceViewHolder(parent)
-            TYPE_DESCRIPTION -> DescriptionViewHolder(parent)
-            TYPE_COMMENT_HEADER -> HeaderViewHolder(parent)
-            TYPE_COMMENT -> CommentViewHolder(parent)
-            else -> throw IllegalArgumentException("Invalid type $viewType")
+            R.layout.cheese_image_item -> ImageViewHolder(parent)
+            R.layout.cheese_price_item -> PriceViewHolder(parent)
+            R.layout.cheese_description_item -> DescriptionViewHolder(parent)
+            R.layout.cheese_comment_header -> CommentHeaderViewHolder(parent)
+            R.layout.cheese_comment_item -> CommentViewHolder(parent)
+            else -> error("Invalid viewType $viewType")
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
+            is ImageViewHolder -> bindImageViewHolder(holder)
             is PriceViewHolder -> bindPriceViewHolder(holder)
             is DescriptionViewHolder -> bindDescriptionViewHolder(holder)
-            is HeaderViewHolder -> bindHeaderViewHolder(holder)
-            is CommentViewHolder -> bindCommentViewHolder(holder, position - POSITION_FIRST_COMMENT)
+            is CommentHeaderViewHolder -> bindCommentHeaderViewHolder(holder)
+            is CommentViewHolder -> bindCommentViewHolder(holder, position - FIRST_COMMENT_POSITION)
         }
+    }
+
+    private fun bindImageViewHolder(holder: ImageViewHolder) {
+        holder.binding.imageUrl = cheese?.imageUrl
     }
 
     private fun bindPriceViewHolder(holder: PriceViewHolder) {
         val price = this.price
         holder.binding.price = when {
-            isLoadingPrice -> holder.binding.root.context.getString(R.string.fetching_price)
+            isLoadingPrice -> holder.getString(R.string.fetching_price)
             price != null -> String.format(Locale.getDefault(), "$%.2f", price.price)
-            else -> holder.binding.root.context.getString(R.string.price_unavailable)
+            else -> holder.getString(R.string.price_unavailable)
         }
     }
 
     private fun bindDescriptionViewHolder(holder: DescriptionViewHolder) {
-        holder.binding.cheese = cheese
+        holder.binding.description = cheese?.description
     }
 
-    private fun bindHeaderViewHolder(holder: HeaderViewHolder) {
-        holder.binding.headerText = holder.binding.root.context.getString(R.string.comments)
+    private fun bindCommentHeaderViewHolder(holder: CommentHeaderViewHolder) {
+        holder.binding.header = holder.getString(R.string.comments)
     }
 
     private fun bindCommentViewHolder(holder: CommentViewHolder, position: Int) {
@@ -79,49 +95,29 @@ class CheeseDetailAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-        if (cheese == null) {
-            return 0
-        }
-        var count = 3 // Description, Price, and Comment Header
-        if (comments.isEmpty()) {
-            count++
-        }
-        return count + comments.size
+        this.cheese ?: return 0
+        return 4 + comments.size // + 1 // 4 Image, Price, Description, comment header
     }
 
     override fun getItemViewType(position: Int): Int {
         return when (position) {
-            POSITION_PRICE -> TYPE_PRICE
-            POSITION_DESCRIPTION -> TYPE_DESCRIPTION
-            POSITION_COMMENT_HEADER -> TYPE_COMMENT_HEADER
-            else -> TYPE_COMMENT
+            0 -> R.layout.cheese_image_item
+            1 -> R.layout.cheese_price_item
+            2 -> R.layout.cheese_description_item
+            3 -> R.layout.cheese_comment_header
+            else -> R.layout.cheese_comment_item
         }
     }
 
-    val commentCount: Int
-        get() = comments.size
-
-    fun hasCheese() = cheese != null
-
-    fun hasPrice() = price != null
-
-    internal class PriceViewHolder(parent: ViewGroup) : BindingViewHolder<PriceItemBinding>(R.layout.price_item, parent)
-
-    internal class DescriptionViewHolder(parent: ViewGroup) : BindingViewHolder<DescriptionItemBinding>(R.layout.description_item, parent)
-
-    internal class CommentViewHolder(parent: ViewGroup) : BindingViewHolder<CommentItemBinding>(R.layout.comment_item, parent)
-
-    internal class HeaderViewHolder(parent: ViewGroup) : BindingViewHolder<HeaderItemBinding>(R.layout.header_item, parent)
-
     companion object {
-        private const val POSITION_PRICE = 0
-        private const val POSITION_DESCRIPTION = 1
-        private const val POSITION_COMMENT_HEADER = 2
-        private const val POSITION_FIRST_COMMENT = 3
-
-        private const val TYPE_PRICE = 1
-        private const val TYPE_DESCRIPTION = 2
-        private const val TYPE_COMMENT_HEADER = 3
-        private const val TYPE_COMMENT = 4
+        private const val FIRST_COMMENT_POSITION  = 4
     }
+
+    class ImageViewHolder(parent: ViewGroup) : BindingViewHolder<CheeseImageItemBinding>(R.layout.cheese_image_item, parent)
+    class DescriptionViewHolder(parent: ViewGroup) : BindingViewHolder<CheeseDescriptionItemBinding>(R.layout.cheese_description_item, parent)
+    class PriceViewHolder(parent: ViewGroup) : BindingViewHolder<CheesePriceItemBinding>(R.layout.cheese_price_item, parent)
+    class CommentHeaderViewHolder(parent: ViewGroup) : BindingViewHolder<CheeseCommentHeaderBinding>(R.layout.cheese_comment_header, parent)
+    class CommentViewHolder(parent: ViewGroup) : BindingViewHolder<CheeseCommentItemBinding>(R.layout.cheese_comment_item, parent)
+
+    private fun <T : ViewDataBinding> BindingViewHolder<T>.getString(@StringRes stringId: Int) = binding.root.context.getString(stringId)
 }

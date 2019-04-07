@@ -1,28 +1,29 @@
 package com.vikingsen.cheesedemo.model.database
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.RoomDatabase
-import android.arch.persistence.room.TypeConverters
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import androidx.room.migration.Migration
 import com.vikingsen.cheesedemo.model.database.cheese.Cheese
 import com.vikingsen.cheesedemo.model.database.cheese.CheeseDao
 import com.vikingsen.cheesedemo.model.database.comment.Comment
 import com.vikingsen.cheesedemo.model.database.comment.CommentDao
-
 
 @Database(
     entities = [
         Cheese::class,
         Comment::class
     ],
-    version = 2
+    version = 3
 )
-@TypeConverters(LocalDateTimeConverter::class)
+@TypeConverters(DateTimeConverters::class)
 abstract class ShopDatabase : RoomDatabase() {
-
-    abstract fun cheeseDao(): CheeseDao
-    abstract fun commentDao(): CommentDao
+    abstract val cheeseDao: CheeseDao
+    abstract val commentDao: CommentDao
 
     companion object {
-        val DATABASE_NAME: String = "shop.sqlite"
+        const val DATABASE_NAME = "shop.db"
+
+        val migrations = arrayOf<Migration>()
     }
 }

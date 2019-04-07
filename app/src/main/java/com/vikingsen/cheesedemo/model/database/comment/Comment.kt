@@ -1,20 +1,18 @@
 package com.vikingsen.cheesedemo.model.database.comment
 
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.PrimaryKey
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import org.threeten.bp.LocalDateTime
-
+import org.threeten.bp.OffsetDateTime
 
 @Entity(tableName = "comment")
-class Comment  {
+data class Comment(
     @PrimaryKey
-    var id = ""
-    var cheeseId = 0L
-    var user = ""
-    var comment = ""
-    var created: LocalDateTime = LocalDateTime.now()
-    var synced = false
+    var id: String = "",
+    var cheeseId: Long = 0L,
+    var user: String = "",
+    var comment: String = "",
+    var created: OffsetDateTime = OffsetDateTime.now(),
+    var synced: Boolean = false,
     var cached: LocalDateTime? = null
-
-
-}
+)

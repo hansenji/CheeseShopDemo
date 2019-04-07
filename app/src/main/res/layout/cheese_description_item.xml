@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <data>
+
+        <variable
+            name="description"
+            type="String"
+            />
+    </data>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@{description}"
+        android:padding="8dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        tools:keep="@layout/cheese_description_item"
+        tools:text="Dolorquas quas.  Rutrumamet eloquentiam sanctus lorem mollis referrentur habitasse."
+        />
+</layout>

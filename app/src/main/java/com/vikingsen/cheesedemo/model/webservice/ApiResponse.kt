@@ -6,13 +6,12 @@ import timber.log.Timber
 import java.io.IOException
 import java.net.HttpURLConnection
 
-
 @Suppress("MemberVisibilityCanPrivate", "unused")
 class ApiResponse<T> : NetworkBoundResource.NetworkResponse<T> {
     override val data: T?
-    val code: Int
-    override val error: Throwable?
     override val errorResponse: String?
+    override val error: Throwable?
+    val code: Int
 
     override val successful: Boolean
         get() = code in 200..299
@@ -24,20 +23,33 @@ class ApiResponse<T> : NetworkBoundResource.NetworkResponse<T> {
         this.errorResponse = error?.message
     }
 
-    constructor(code: Int, body: T?, error: Throwable? = null) {
+    constructor(code: Int, data: T?, error: Throwable? = null) {
         this.code = code
-        this.data = body
+        this.data = data
         this.error = error
         this.errorResponse = error?.message
     }
 
-    constructor(response: Response<T>?) {
-        code = response?.code() ?: HttpURLConnection.HTTP_INTERNAL_ERROR
-        if (response?.isSuccessful == true) {
-            data = response.body()
+    constructor(response: Response<T>?, allowNullBody: Boolean = false) {
+        val isSuccessful = response?.isSuccessful == true
+        val body = response?.body()
+        if (isSuccessful && allowNullBody) {
+            code = response?.code() ?: HttpURLConnection.HTTP_INTERNAL_ERROR
+            data = body
             error = null
             errorResponse = null
+        } else if (isSuccessful && body != null) {
+            code = response.code()
+            data = body
+            error = null
+            errorResponse = null
+        } else if (isSuccessful && body == null) {
+            code = HttpURLConnection.HTTP_INTERNAL_ERROR
+            data = null
+            error = getWebServiceError(response)
+            errorResponse = error.message
         } else {
+            code = response?.code() ?: HttpURLConnection.HTTP_INTERNAL_ERROR
             error = getWebServiceError(response)
             errorResponse = error.message
             data = null
@@ -61,5 +73,6 @@ class ApiResponse<T> : NetworkBoundResource.NetworkResponse<T> {
         }
     }
 
-    class WebServiceError(message: String?) : Throwable(message)
 }
+
+class WebServiceError(message: String?) : Throwable(message)

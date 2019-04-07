@@ -1,13 +1,14 @@
 package com.vikingsen.cheesedemo.ui.util
 
-import android.databinding.BindingAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.vikingsen.cheesedemo.BuildConfig
 import com.vikingsen.cheesedemo.R
 import org.threeten.bp.LocalDateTime
+import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
 
@@ -35,6 +36,12 @@ object CustomBinders {
         textView.text = localDateTime?.format(FORMATTER)
     }
 
-    private val FORMATTER = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
+    @JvmStatic
+    @BindingAdapter("date")
+    fun bindDate(textView: TextView, dateTime: OffsetDateTime?) {
+        textView.text = dateTime?.format(FORMATTER)
+    }
+
+    private val FORMATTER: DateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
 
 }
